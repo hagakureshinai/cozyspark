@@ -1,24 +1,81 @@
 ---
-// ここで「食材（データ）」を取り出します
-import { getCollection } from 'astro:content';
-const allWorks = await getCollection('works');
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <title>Cozy Spark</title>
-  </head>
-  <body>
-    <h1>Cozy Spark</h1>
-    <p>テスト表示中</p>
+<Layout title="Cozy Spark">
+  <main class="cushion">
+    <div class="logo-area">
+      <h1>Cozy Spark</h1>
+      <p class="subtitle">Original BL Fiction</p>
+    </div>
 
-<ul>
-      {allWorks.map(story => (
-        <li>
-          {story.data.title} - {story.data.category}（{story.data.status}）
-        </li>
-      ))}
-    </ul>
-  </body>
-</html>
+    <div class="disclaimer">
+      <p>当サイトは個人による創作BL小説サイトです。</p>
+      <p>実在の人物・団体等とは一切関係ありません。</p>
+      <p>無断転載・複製・二次配布を禁じます。</p>
+      <div class="r18-note">
+        <p>※18歳未満の方の閲覧はご遠慮ください（外部リンク先含む）</p>
+      </div>
+    </div>
+
+    <nav class="enter-nav">
+      <a href="/works/" class="enter-button">ENTER</a>
+    </nav>
+  </main>
+</Layout>
+
+<style>
+  /* このページだけのスタイル */
+  .cushion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .logo-area h1 {
+    font-size: 3rem;
+    font-weight: normal;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: var(--accent-color);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 4rem;
+  }
+
+  .disclaimer {
+    font-size: 0.85rem;
+    line-height: 2;
+    color: #666;
+    margin-bottom: 4rem;
+  }
+
+  .r18-note {
+    margin-top: 1rem;
+    color: #999;
+  }
+
+  .enter-button {
+    display: inline-block;
+    padding: 1rem 4rem;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: var(--text-color);
+    letter-spacing: 0.2em;
+    transition: all 0.4s;
+  }
+
+  .enter-button:hover {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+  }
+</style>
