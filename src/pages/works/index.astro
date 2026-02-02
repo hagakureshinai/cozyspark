@@ -1,0 +1,129 @@
+---
+// src/pages/works/index.astro (修正版)
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const allWorks = await getCollection('works');
+const sortedWorks = allWorks.sort((a, b) => a.data.order - b.data.order);
+
+const seriesWorks = sortedWorks.filter(work => work.data.category === 'series');
+const singleWorks = sortedWorks.filter(work => work.data.category === 'single');
+const ssWorks = sortedWorks.filter(work => work.data.category === 'ss');
+
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+// IDから拡張子を削除するヘルパー関数
+const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
+---
+
+<Layout title="Works - Cozy Spark">
+  <main class="container">
+    <header class="page-header">
+      <nav>
+        <a href={import.meta.env.BASE_URL}>← Top</a>
+      </nav>
+      <h1>Works</h1>
+    </header>
+
+    {seriesWorks.length > 0 && (
+      <section class="work-category">
+        <h2>Series</h2>
+        <ul class="work-list">
+          {seriesWorks.map(work => (
+            <li class="work-item">
+              {/* work.id ではなく getSlug(work.id) を使う */}
+              <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
+                <span class="work-title">{work.data.title}</span>
+              </a>
+              {work.data.status === 'ongoing' && <span class="badge-ongoing">連載中</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {singleWorks.length > 0 && (
+      <section class="work-category">
+        <h2>Single</h2>
+        <ul class="work-list">
+          {singleWorks.map(work => (
+            <li class="work-item">
+              <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
+                <span class="work-title">{work.data.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {ssWorks.length > 0 && (
+      <section class="work-category">
+        <h2>Short Story</h2>
+        <ul class="work-list">
+          {ssWorks.map(work => (
+            <li class="work-item">
+              <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
+                <span class="work-title">{work.data.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  .page-header {
+    margin-bottom: 3rem;
+  }
+  h1 {
+    font-size: 1.8rem;
+    font-weight: normal;
+    border-bottom: 1px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+    margin-top: 1rem;
+  }
+  .work-category {
+    margin-bottom: 3rem;
+  }
+  h2 {
+    font-size: 1.1rem;
+    font-weight: normal;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .work-list {
+    list-style: none;
+    padding: 0;
+  }
+  .work-item {
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .work-item a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+  .work-item a:hover {
+    text-decoration: underline;
+  }
+  .badge-ongoing {
+    font-size: 0.7rem;
+    border: 1px solid #ccc;
+    padding: 1px 6px;
+    color: #888;
+    border-radius: 2px;
+  }
+</style>
