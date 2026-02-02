@@ -13,10 +13,10 @@ const allWorks = await getCollection('works');
     <h1>Cozy Spark</h1>
     <p>テスト表示中</p>
 
-    <ul>
+<ul>
       {allWorks.map(story => (
         <li>
-          {story.data.workTitle} - {story.data.title}（{story.data.rating}）
+          {story.data.title} - {story.data.category}（{story.data.status}）
         </li>
       ))}
     </ul>
