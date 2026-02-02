@@ -1,5 +1,8 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 
-// https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+  // サイトのドメイン（末尾のスラッシュはなし）
+  site: 'https://hagakureshinai.github.io',
+  // リポジトリ名と同じにする（前後のスラッシュが必要）
+  base: '/cozyspark',
+});

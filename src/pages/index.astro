@@ -1,11 +1,24 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// ここで「食材（データ）」を取り出します
+import { getCollection } from 'astro:content';
+const allWorks = await getCollection('works');
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cozy Spark</title>
+  </head>
+  <body>
+    <h1>Cozy Spark</h1>
+    <p>テスト表示中</p>
+
+    <ul>
+      {allWorks.map(story => (
+        <li>
+          {story.data.workTitle} - {story.data.title}（{story.data.rating}）
+        </li>
+      ))}
+    </ul>
+  </body>
+</html>
