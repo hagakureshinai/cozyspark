@@ -4,6 +4,7 @@ interface Props {
 	title: string;
 }
 const { title } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 <!doctype html>
 <html lang="ja">
@@ -14,24 +15,74 @@ const { title } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
+		<header class="site-header">
+			<div class="header-container">
+				<a href={`${baseUrl}/`} class="site-logo">Cozy Spark</a>
+				<nav class="site-nav">
+					<a href={`${baseUrl}/works/`}>Works</a>
+				</nav>
+			</div>
+		</header>
+
 		<slot /> <!-- ここに各ページの内容が入ります -->
+
+		<footer class="site-footer">
+			<p>&copy; Cozy Spark</p>
+		</footer>
 	</body>
 </html>
 
 <style is:global>
-  /* サイト全体に適用する設定 */
 	:root {
 		--bg-color: #fdfdfd;
 		--text-color: #333;
 		--accent-color: #888;
 	}
 	html {
-		font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif; /* 基本は明朝体 */
+		font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif;
 		background: var(--bg-color);
 		color: var(--text-color);
 	}
 	body {
 		margin: 0;
 		padding: 0;
+	}
+
+	/* ヘッダーのスタイル */
+	.site-header {
+		padding: 1.5rem 0;
+		border-bottom: 1px solid #eee;
+		margin-bottom: 2rem;
+	}
+	.header-container {
+		max-width: 700px;
+		margin: 0 auto;
+		padding: 0 1.5rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.site-logo {
+		font-size: 1.2rem;
+		text-decoration: none;
+		color: var(--text-color);
+		letter-spacing: 0.1rem;
+		font-weight: normal;
+	}
+	.site-nav a {
+		font-size: 0.9rem;
+		text-decoration: none;
+		color: var(--accent-color);
+	}
+	.site-nav a:hover {
+		text-decoration: underline;
+	}
+
+	/* フッターのスタイル */
+	.site-footer {
+		text-align: center;
+		padding: 4rem 0 2rem;
+		font-size: 0.8rem;
+		color: var(--accent-color);
 	}
 </style>

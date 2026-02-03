@@ -1,0 +1,147 @@
+---
+// src/pages/episodes/[...id].astro
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const episodes = await getCollection('episodes');
+  
+  return episodes.map((episode) => {
+    return {
+      // 直接 replace を使って拡張子を消した ID をパスにする
+      params: { id: episode.id.replace(/\.[^/.]+$/, "") },
+      props: { episode },
+    };
+  });
+}
+
+const { episode } = Astro.props;
+const { Content } = await render(episode);
+
+// IDから拡張子を消す共通の処理（表示部分用）
+const cleanId = (id: string) => id.replace(/\.[^/.]+$/, "");
+
+// 同一作品内の「前へ」「次へ」を計算
+const allEpisodes = await getCollection('episodes');
+const workEpisodes = allEpisodes
+  .filter(ep => cleanId(ep.data.workId) === cleanId(episode.data.workId))
+  .sort((a, b) => a.data.order - b.data.order);
+
+// 前後のエピソードを特定
+const currentIndex = workEpisodes.findIndex(ep => ep.id === episode.id);
+const prevEpisode = workEpisodes[currentIndex - 1];
+const nextEpisode = workEpisodes[currentIndex + 1];
+
+// 作品情報を取得
+const allWorks = await getCollection('works');
+const work = allWorks.find(w => cleanId(w.id) === cleanId(episode.data.workId));
+
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<Layout title={`${episode.data.title} - ${work?.data.title} | Cozy Spark`}>
+  <article class="novel-container">
+    <header class="novel-header">
+      <p class="work-title">
+        <a href={`${baseUrl}/works/${cleanId(episode.data.workId)}/`}>{work?.data.title}</a>
+      </p>
+      <h1 class="episode-title">{episode.data.title}</h1>
+    </header>
+
+    <div class="novel-content">
+      <Content />
+    </div>
+
+    <nav class="novel-nav">
+      <div class="nav-prev">
+        {prevEpisode && (
+          <a href={`${baseUrl}/episodes/${cleanId(prevEpisode.id)}/`}>
+            <span class="nav-arrow">←</span> 前の話へ
+          </a>
+        )}
+      </div>
+      <div class="nav-index">
+        <a href={`${baseUrl}/works/${cleanId(episode.data.workId)}/`}>目次</a>
+      </div>
+      <div class="nav-next">
+        {nextEpisode && (
+          <a href={`${baseUrl}/episodes/${cleanId(nextEpisode.id)}/`}>
+            次の話へ <span class="nav-arrow">→</span>
+          </a>
+        )}
+      </div>
+    </nav>
+  </article>
+</Layout>
+
+<style is:global>
+  /* 小説本文のフォントと挙動を安定させる設定 */
+  .novel-content {
+    line-height: 2.2;
+    font-size: 1.15rem;
+    margin-bottom: 5rem;
+    /* 改行を反映しつつ、行頭の空白を維持する設定 */
+    white-space: break-spaces; 
+    word-break: break-all;
+  }
+
+  .novel-content p {
+    margin: 1.8em 0;
+    /* 全角スペースの有無に関わらず、必ず1文字分下げる */
+    text-indent: 1em; 
+  }
+
+  /* 1段落目の字下げが消える現象への強制対策 */
+  .novel-content p:first-of-type::before {
+    content: "";
+    display: inline-block;
+  }
+</style>
+
+<style>
+  .novel-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+  }
+  .novel-header {
+    margin-bottom: 4rem;
+    text-align: center;
+  }
+  .work-title {
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+  }
+  .work-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .episode-title {
+    font-size: 1.5rem;
+    font-weight: normal;
+  }
+  .novel-content {
+    line-height: 2.2;
+    font-size: 1.1rem;
+    margin-bottom: 5rem;
+    white-space: pre-wrap; /* 改行を反映させるための設定 */
+  }
+  .novel-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    border-top: 1px solid #eee;
+    padding-top: 2rem;
+    margin-top: 5rem;
+  }
+  .novel-nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .nav-prev { text-align: left; }
+  .nav-index { text-align: center; }
+  .nav-next { text-align: right; }
+  .nav-arrow { font-size: 1.2rem; }
+</style>
