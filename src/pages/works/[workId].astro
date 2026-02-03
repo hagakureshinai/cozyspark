@@ -1,0 +1,123 @@
+---
+// src/pages/works/[workId].astro
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const allWorks = await getCollection('works');
+  const allEpisodes = await getCollection('episodes');
+
+  return allWorks.map((work) => {
+    // この作品に属するエピソードだけを抽出してソート
+    const workEpisodes = allEpisodes
+      .filter((episode) => episode.data.workId === work.id)
+      .sort((a, b) => a.data.order - b.data.order);
+
+    return {
+      params: { workId: work.id },
+      props: { work, episodes: workEpisodes },
+    };
+  });
+}
+
+const { work, episodes } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+// IDから拡張子を除いたエピソードIDを取得する関数
+const getEpisodeSlug = (id: string) => {
+  return id.split('/').pop()?.replace(/\.[^/.]+$/, "") || id;
+};
+---
+
+<Layout title={work.data.title}>
+  <main class="container">
+    <header class="work-header">
+      <h1 class="work-title">{work.data.title}</h1>
+      <div class="work-meta">
+        <span class="category">{work.data.category}</span>
+        <span class="status">{work.data.status === 'completed' ? '完結' : '連載中'}</span>
+      </div>
+    </header>
+
+    <section class="episode-list-section">
+      <h2 class="section-title">目次</h2>
+      <ul class="episode-list">
+        {episodes.map((episode) => (
+          <li>
+            <a href={`${baseUrl}/works/${work.id}/${getEpisodeSlug(episode.id)}/`}>
+              <span class="order">{episode.data.order}</span>
+              <span class="title">{episode.data.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <div class="back-to-top">
+      <a href={`${baseUrl}/works/`}>&laquo; 作品一覧へ戻る</a>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  .work-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 2rem;
+  }
+  .work-title {
+    font-size: 2rem;
+    font-weight: normal;
+    margin-bottom: 1rem;
+  }
+  .work-meta {
+    font-size: 0.9rem;
+    color: #888;
+  }
+  .work-meta span {
+    margin-right: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  .episode-list {
+    list-style: none;
+    padding: 0;
+  }
+  .episode-list li {
+    border-bottom: 1px dashed #eee;
+  }
+  .episode-list a {
+    display: flex;
+    padding: 1rem 0;
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+  }
+  .episode-list a:hover {
+    color: var(--accent-color);
+  }
+  .episode-list .order {
+    width: 3rem;
+    color: #ccc;
+  }
+  
+  .back-to-top {
+    margin-top: 5rem;
+    text-align: center;
+  }
+  .back-to-top a {
+    text-decoration: none;
+    color: #888;
+    font-size: 0.9rem;
+  }
+</style>
