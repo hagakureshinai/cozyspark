@@ -8,6 +8,7 @@ const worksCollection = defineCollection({
     category: z.enum(['series', 'single', 'ss']), // シリーズ, 単発, 掌編
     status: z.enum(['ongoing', 'completed']),   // 連載中, 完結
     order: z.number(),                            // 表示順
+    isUpdated: z.boolean().optional(),            // [P0] 最新更新バッジ判定用（任意）
     // 必要に応じて今後追加（例：coverImageなど）
   }),
 });

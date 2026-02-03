@@ -32,6 +32,7 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
               <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
                 <span class="work-title">{work.data.title}</span>
               </a>
+              {work.data.isUpdated && <span class="badge-updated">UP</span>}
               {work.data.status === 'ongoing' && <span class="badge-ongoing">連載中</span>}
             </li>
           ))}
@@ -48,6 +49,7 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
               <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
                 <span class="work-title">{work.data.title}</span>
               </a>
+              {work.data.isUpdated && <span class="badge-updated">UP</span>}
             </li>
           ))}
         </ul>
@@ -63,6 +65,7 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
               <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
                 <span class="work-title">{work.data.title}</span>
               </a>
+              {work.data.isUpdated && <span class="badge-updated">UP</span>}              
             </li>
           ))}
         </ul>
@@ -122,5 +125,16 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
     padding: 1px 6px;
     color: #888;
     border-radius: 2px;
+  }
+
+    /* 【UPバッジのCSSを追加】 */
+  .badge-updated {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #A03A3A; /* 赤系 */
+    padding: 1px 6px;
+    border-radius: 2px;
+    line-height: 1.5; /* テキストの位置調整 */
   }
 </style>
