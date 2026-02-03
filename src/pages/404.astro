@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = '404 Not Found';
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<Layout title={title} showNavigation={false}>
+    <main class="not-found-container">
+        <h1>404 Not Found</h1>
+        <p>お探しのページは見つかりませんでした。</p>
+        <p>URLが誤っているか、ページが移動・削除された可能性があります。</p>
+        <div class="navigation-links">
+            <a href={`${baseUrl}/`}>トップページへ</a>
+            <span class="separator">|</span>
+            <a href={`${baseUrl}/works/`}>作品一覧へ</a>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .not-found-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+        text-align: center;
+    }
+
+    .not-found-container h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        font-weight: normal;
+        color: #A03A3A; /* テーマカラーを使用 */
+    }
+
+    .not-found-container p {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        line-height: 1.8;
+    }
+
+    .navigation-links {
+        margin-top: 3rem;
+        font-size: 0.95rem;
+    }
+
+    .navigation-links a {
+        color: var(--text-color);
+        text-decoration: underline;
+        transition: color 0.2s;
+    }
+
+    .navigation-links a:hover {
+        color: var(--accent-color);
+    }
+    
+    .separator {
+        margin: 0 1rem;
+        color: #ccc;
+    }
+</style>

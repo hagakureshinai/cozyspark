@@ -31,6 +31,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
         {showNavigation && (
             <footer class="site-footer">
+				<a href={`${baseUrl}/policy/`} class="footer-link">Policy</a>
                 <p>&copy; Cozy Spark</p>
             </footer>
         )}
@@ -90,4 +91,24 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 		font-size: 0.8rem;
 		color: var(--accent-color);
 	}
+    /* フッター内のリンクとコピーライトを中央揃えで配置 */
+    .footer-links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem; /* 要素間のスペース */
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .footer-link {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+    .footer-link:hover {
+        text-decoration: underline;
+    }
+    .site-footer p {
+        margin: 0; /* pタグのデフォルトマージンをリセット */
+    }
 </style>
