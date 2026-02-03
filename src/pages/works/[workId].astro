@@ -7,14 +7,22 @@ export async function getStaticPaths() {
   const allWorks = await getCollection('works');
   const allEpisodes = await getCollection('episodes');
 
+  // IDから拡張子を除くヘルパー関数
+  const cleanId = (id: string) => id.split('/').pop()?.replace(/\.[^/.]+$/, "") || id;
+
   return allWorks.map((work) => {
-    // この作品に属するエピソードだけを抽出してソート
+    const workSlug = cleanId(work.id);
+
+    // 作品内のエピソードを抽出（FrontmatterのworkIdと、作品データのファイル名を比較）
     const workEpisodes = allEpisodes
-      .filter((episode) => episode.data.workId === work.id)
+      .filter((episode) => {
+        // エピソード側が持つ workId と、作品側のファイル名(slug)が一致するか確認
+        return episode.data.workId === workSlug;
+      })
       .sort((a, b) => a.data.order - b.data.order);
 
     return {
-      params: { workId: work.id },
+      params: { workId: workSlug }, // 拡張子なしのIDをURLにする
       props: { work, episodes: workEpisodes },
     };
   });
@@ -23,10 +31,8 @@ export async function getStaticPaths() {
 const { work, episodes } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-// IDから拡張子を除いたエピソードIDを取得する関数
-const getEpisodeSlug = (id: string) => {
-  return id.split('/').pop()?.replace(/\.[^/.]+$/, "") || id;
-};
+// エピソード用にも同じ関数を用意
+const cleanId = (id: string) => id.split('/').pop()?.replace(/\.[^/.]+$/, "") || id;
 ---
 
 <Layout title={work.data.title}>
@@ -44,13 +50,14 @@ const getEpisodeSlug = (id: string) => {
       <ul class="episode-list">
         {episodes.map((episode) => (
           <li>
-            <a href={`${baseUrl}/works/${work.id}/${getEpisodeSlug(episode.id)}/`}>
+            <a href={`${baseUrl}/works/${cleanId(work.id)}/${cleanId(episode.id)}/`}>
               <span class="order">{episode.data.order}</span>
               <span class="title">{episode.data.title}</span>
             </a>
           </li>
         ))}
       </ul>
+      {episodes.length === 0 && <p>エピソードはまだありません。</p>}
     </section>
 
     <div class="back-to-top">
