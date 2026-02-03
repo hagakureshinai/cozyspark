@@ -27,7 +27,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
             </header>
         )}
 
-        <main class="novel-content">
+        <main class="content-area">
             <slot /> <!-- ここに各ページの内容が入ります -->
         </main>
 
@@ -114,30 +114,12 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
         margin: 0; /* pタグのデフォルトマージンをリセット */
     }
 
-	/* --- 小説本文表示のための基本レイアウト設定 --- */
-	.novel-content {
-		/* 行長の設定（最大幅を700pxに制限し、PCでの読みやすさを確保） */
-		max-width: 700px;
-		margin: 0 auto;
-		/* スマホ対応：左右に余白を設定（header-containerのpaddingと同じ） */
-		padding: 0 1.5rem; 
+	/* --- コンテンツ本文表示のための基本レイアウト設定 --- */
+	.content-area { /* クラス名を抽象化 */
+		/* レイアウト責務の定義 */
+		max-width: 1000px; /* ページ全体の横幅制御 */
+		margin: 0 auto; /* センタリング指定 */
+		padding: 2rem 1.5rem; /* ページ単位の余白 */
 	}
 
-	.novel-content p {
-		/* 行間を広めに設定（要件：行間・段落間は広めに確保） */
-		line-height: 2.0;
-		
-		/* 段落間を設定（行間と同じ2.0emに設定するとバランスが取りやすい） */
-		margin-top: 0;
-		margin-bottom: 2.0em;
-		
-		/* 行頭字下げ（要件：行頭字下げ（全角スペース）あり） */
-		text-indent: 1em; 
-	}
-
-	/* 見出し（h2, h3など）の直後の段落は字下げをしないのが一般的な組版ルール */
-	.novel-content h2 + p,
-	.novel-content h3 + p {
-		text-indent: 0;
-	}
 </style>
