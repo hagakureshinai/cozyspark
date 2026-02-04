@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 // import sitemap from '@astrojs/sitemap'; // サイトマップの設定
 
 export default defineConfig({
@@ -6,7 +7,7 @@ export default defineConfig({
   site: 'https://hagakureshinai.github.io',
   // リポジトリ名と同じにする（前後のスラッシュが必要）
   base: '/cozyspark',
-integrations: [],
+  integrations: [sitemap()],
 
   markdown: {
     remarkPlugins: [
