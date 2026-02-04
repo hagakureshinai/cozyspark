@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Cozy Spark" showNavigation={false}>
-  <main class="cushion">
+  <div class="intro-container">
     <div class="logo-area">
       <h1>Cozy Spark</h1>
       <p class="subtitle">Original BL Fiction</p>
@@ -21,18 +21,13 @@ import Layout from '../layouts/Layout.astro';
     <nav class="enter-nav">
       <a href="/cozyspark/works/" class="enter-button">ENTER</a>
     </nav>
-  </main>
+  </div>
 </Layout>
 
 <style>
-  /* このページだけのスタイル */
-  .cushion {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 2rem;
+  /* ページ固有の「コンテンツ表現」のみを記述 */
+  .intro-container {
+    /* padding, display:flex, min-height 等のレイアウト指定を削除 */
     text-align: center;
   }
 

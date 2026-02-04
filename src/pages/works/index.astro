@@ -17,72 +17,72 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
 ---
 
 <Layout title="Works - Cozy Spark">
-  <main class="container">
-    <header class="page-header">
-      <h1>Works</h1>
-    </header>
+  <header class="page-header">
+    <h1>Works</h1>
+  </header>
 
-    {seriesWorks.length > 0 && (
-      <section class="work-category">
-        <h2>Series</h2>
-        <ul class="work-list">
-          {seriesWorks.map(work => (
-            <li class="work-item">
-              {/* work.id ではなく getSlug(work.id) を使う */}
-              <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
-                <span class="work-title">{work.data.title}</span>
-              </a>
-              {work.data.isUpdated && <span class="badge-updated">UP</span>}
-              {work.data.status === 'ongoing' && <span class="badge-ongoing">連載中</span>}
-            </li>
-          ))}
-        </ul>
-      </section>
-    )}
+  {seriesWorks.length > 0 && (
+    <section class="work-category">
+      <h2>Series</h2>
+      <ul class="work-list">
+        {seriesWorks.map(work => (
+          <li class="work-item">
+            {/* work.id ではなく getSlug(work.id) を使う */}
+            <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
+              <span class="work-title">{work.data.title}</span>
+            </a>
+            {work.data.isUpdated && <span class="badge-updated">UP</span>}
+            {work.data.status === 'ongoing' && <span class="badge-ongoing">連載中</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 
-    {singleWorks.length > 0 && (
-      <section class="work-category">
-        <h2>Single</h2>
-        <ul class="work-list">
-          {singleWorks.map(work => (
-            <li class="work-item">
-              <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
-                <span class="work-title">{work.data.title}</span>
-              </a>
-              {work.data.isUpdated && <span class="badge-updated">UP</span>}
-            </li>
-          ))}
-        </ul>
-      </section>
-    )}
+  {singleWorks.length > 0 && (
+    <section class="work-category">
+      <h2>Single</h2>
+      <ul class="work-list">
+        {singleWorks.map(work => (
+          <li class="work-item">
+            <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
+              <span class="work-title">{work.data.title}</span>
+            </a>
+            {work.data.isUpdated && <span class="badge-updated">UP</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 
-    {ssWorks.length > 0 && (
-      <section class="work-category">
-        <h2>Short Story</h2>
-        <ul class="work-list">
-          {ssWorks.map(work => (
-            <li class="work-item">
-              <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
-                <span class="work-title">{work.data.title}</span>
-              </a>
-              {work.data.isUpdated && <span class="badge-updated">UP</span>}              
-            </li>
-          ))}
-        </ul>
-      </section>
-    )}
-  </main>
+  {ssWorks.length > 0 && (
+    <section class="work-category">
+      <h2>Short Story</h2>
+      <ul class="work-list">
+        {ssWorks.map(work => (
+          <li class="work-item">
+            <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
+              <span class="work-title">{work.data.title}</span>
+            </a>
+            {work.data.isUpdated && <span class="badge-updated">UP</span>}              
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 </Layout>
 
 <style>
-  .container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
+  /* ページ固有のレイアウト上書き: Layout.astro で定義したカスタムプロパティを使用 */
+  /* `:global` を使用して .content-area に影響を与える */
+  :global(.content-area) {
+    --content-max-width: 700px; /* このページでは 700px に設定 */
   }
+  
   .page-header {
     margin-bottom: 3rem;
   }
+
   h1 {
     font-size: 1.8rem;
     font-weight: normal;

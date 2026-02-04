@@ -3,8 +3,10 @@
 interface Props {
 	title: string;
     showNavigation?: boolean;
+    isFullHeight?: boolean; // 高さいっぱいに使うページ用フラグ
+	narrow?: boolean; // コンテンツ幅を狭くするオプション
 }
-const { title, showNavigation = true } = Astro.props;
+const { title, showNavigation = true, isFullHeight = false, narrow = false } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 // ★ GA4のトラッキングコード
@@ -34,13 +36,16 @@ const ga4TrackingCode = `
                 <div class="header-container">
                     <a href={`${baseUrl}/`} class="site-logo">Cozy Spark</a>
                     <nav class="site-nav">
-                        <a href={`${baseUrl}/works/`}>Works</a>
+                        <a href={`${baseUrl}/works/`}>作品一覧へ戻る</a>
                     </nav>
                 </div>
             </header>
         )}
 
-        <main class="content-area">
+        <main class:list={[
+			"content-area", 
+			{ "is-full-height": isFullHeight, "is-narrow": narrow }
+		]}>
             <slot /> <!-- ここに各ページの内容が入ります -->
         </main>
 
@@ -69,6 +74,22 @@ const ga4TrackingCode = `
 		margin: 0;
 		padding: 0;
 	}
+
+	/* isFullHeight=true の時、画面中央に配置*/
+    .content-area.is-full-height {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 2rem; /* paddingの重複定義を避け、ここで完結させる */
+    }
+
+	/* narrow=true の時の「器」の制御 */
+    .content-area.is-narrow {
+        max-width: 700px;
+        padding-top: 4rem; /* 404で必要だった余白をレイアウト側で定義 */
+    }
 
 	/* ヘッダーのスタイル */
 	.site-header {

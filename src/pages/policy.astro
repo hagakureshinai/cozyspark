@@ -1,30 +1,33 @@
 ---
-// src/pages/policy.astro
-import { Markdown } from 'astro:components';
+// src/pages/polisy.astro
+import Layout from '../layouts/Layout.astro';
 import PolicyContent from '../content/policy/index.md';
 ---
 
-<div class="content-area">
-    <PolicyContent />
-</div>
+<Layout title="プライバシーポリシー" narrow={true}>
+    <article class="policy-content">
+        <PolicyContent />
+    </article>
+</Layout>
 
 <style>
-/* ポリシーページ用のシンプルなスタイル調整 */
-.content-area {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-}
-.content-area h1 {
+/* コンテンツ本文の可読性に関わる指定（コンテンツ責務）のみを残す */
+.policy-content :global(h1) {
     font-size: 1.8rem;
     font-weight: normal;
     border-bottom: 1px solid var(--accent-color);
     padding-bottom: 0.5rem;
     margin-top: 1rem;
 }
-.content-area h2 {
+
+.policy-content :global(h2) {
     font-size: 1.2rem;
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
+
+/* 
+   Markdown出力に対してスタイルを当てるため、
+   `:global()` や適切な子孫セレクタを使用します。
+*/
 </style>

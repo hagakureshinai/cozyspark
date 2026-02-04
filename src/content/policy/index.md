@@ -1,6 +1,5 @@
 ---
 title: "プライバシーポリシー・免責事項"
-layout: "../../layouts/Layout.astro"
 ---
 
 # プライバシーポリシー・免責事項
