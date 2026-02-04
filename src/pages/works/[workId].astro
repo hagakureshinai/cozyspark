@@ -47,7 +47,7 @@ const shouldShowWorkUpdateBadge = work.data.isUpdated;
 ---
 
 <Layout title={work.data.title}>
-  <main class="container">
+  <div class="work-detail-content">
     <header class="work-header">
       <h1 class="work-title">{work.data.title}</h1>
       <div class="work-meta">
@@ -84,15 +84,16 @@ const shouldShowWorkUpdateBadge = work.data.isUpdated;
     <div class="back-to-top">
       <a href={`${baseUrl}/works/`}>&laquo; 作品一覧へ戻る</a>
     </div>
-  </main>
+  </div>
 </Layout>
 
 <style>
-  .container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
+  /* ページ固有のレイアウト上書き: Layout.astro で定義したカスタムプロパティを使用 */
+  /* `:global` を使用して .content-area に影響を与える */
+  :global(.content-area) {
+    --content-max-width: 700px; /* このページでは 700px に設定 */
   }
+
   .work-header {
     margin-bottom: 3rem;
     border-bottom: 1px solid #eee;

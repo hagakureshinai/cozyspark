@@ -45,6 +45,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 		--bg-color: #fdfdfd;
 		--text-color: #333;
 		--accent-color: #888;
+		--content-max-width: 1000px; /* デフォルト値 */
 	}
 	html {
 		font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif;
@@ -117,7 +118,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 	/* --- コンテンツ本文表示のための基本レイアウト設定 --- */
 	.content-area { /* クラス名を抽象化 */
 		/* レイアウト責務の定義 */
-		max-width: 1000px; /* ページ全体の横幅制御 */
+		max-width: var(--content-max-width); /* ページ全体の横幅制御 */
 		margin: 0 auto; /* センタリング指定 */
 		padding: 2rem 1.5rem; /* ページ単位の余白 */
 	}
