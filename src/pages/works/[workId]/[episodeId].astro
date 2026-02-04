@@ -25,7 +25,7 @@ export async function getStaticPaths() {
     const prevEpisode = currentIndex > 0 ? workEpisodes[currentIndex - 1] : null;
     const nextEpisode = currentIndex < workEpisodes.length - 1 ? workEpisodes[currentIndex + 1] : null;
 
-    const work = allWorks.find((w) => w.id === workId);
+    const work = allWorks.find((w) => getSlug(w.id) === workId);
 
     return {
       params: { 
@@ -48,7 +48,7 @@ const { Content } = await render(episode);
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<Layout title={`${episode.data.title} - ${work?.data.title}`}>
+<Layout title={`Cozy Spark- ${work?.data.title} - ${episode.data.title}`}>
   <article>
     <header class="novel-header">
       <p class="work-title">
@@ -122,22 +122,29 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
   }
 
   .episode-navigation {
+    margin-top: 3rem;
+    padding: 1.5rem 0;
     border-top: 1px solid #eee;
-    padding-top: 2rem;
   }
+
   .nav-links {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
   }
+
   .nav-links a {
     text-decoration: none;
-    color: #333;
+    color: var(--text-color);
+    font-size: 0.9rem;
     padding: 0.5rem 1rem;
     border: 1px solid #eee;
     border-radius: 4px;
+    background: #fff;
     transition: background 0.2s;
   }
+
   .nav-links a:hover {
     background: #f9f9f9;
   }
@@ -148,4 +155,40 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
   .disabled {
     width: 80px; 
   }
+
+  /* スマホ表示（768px以下）での固定表示設定 */
+  @media (max-width: 768px) {
+    .episode-navigation {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      margin-top: 0; /* 固定なのでマージン不要 */
+      padding: 0.8rem 1rem; /* 高さをスリムに */
+      background: rgba(253, 253, 253, 0.85); /* ヘッダーより少し不透明度を上げて操作しやすく */
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid #eee;
+      z-index: 100;
+      box-sizing: border-box;
+    }
+
+    .nav-links {
+      max-width: 500px; /* 広がりすぎないように */
+      margin: 0 auto;
+    }
+
+    .nav-links a {
+      font-size: 0.8rem; /* 文字を少し小さく */
+      padding: 0.4rem 0.8rem;
+      border: none; /* 枠線を消してスッキリさせる */
+      background: transparent;
+    }
+    
+    /* 本文がフッターに被らないよう、記事の末尾に余白を追加 */
+    article {
+      padding-bottom: 5rem;
+    }
+  }
+
 </style>
