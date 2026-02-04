@@ -63,13 +63,21 @@ const ga4TrackingCode = `
 		--bg-color: #fdfdfd;
 		--text-color: #333;
 		--accent-color: #888;
-		--content-max-width: 1000px; /* デフォルト値 */
+		--container-max-width: 1000px; /* デフォルト値 */
+		--side-padding: 1.5rem; /* 左右の最低余白を定義 */
 	}
+	
+	/* ★重要：すべての要素の計算方法を「余白を含める」に統一 */
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
 	html {
 		font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif;
 		background: var(--bg-color);
 		color: var(--text-color);
 	}
+
 	body {
 		margin: 0;
 		padding: 0;
@@ -97,14 +105,17 @@ const ga4TrackingCode = `
 		border-bottom: 1px solid #eee;
 		margin-bottom: 2rem;
 	}
+
 	.header-container {
-		max-width: 700px;
+		max-width: var(--container-max-width); /* 固定値をやめ、共通の変数を使用 */
 		margin: 0 auto;
-		padding: 0 1.5rem;
+		padding: 0 var(--side-padding); /* 変数を使用 */
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		/* gap: 1rem; スマホで要素が詰まった時に折り返さない、または調整しやすくする */
 	}
+
 	.site-logo {
 		font-size: 1.2rem;
 		text-decoration: none;
@@ -112,11 +123,13 @@ const ga4TrackingCode = `
 		letter-spacing: 0.1rem;
 		font-weight: normal;
 	}
+
 	.site-nav a {
 		font-size: 0.9rem;
 		text-decoration: none;
 		color: var(--accent-color);
 	}
+
 	.site-nav a:hover {
 		text-decoration: underline;
 	}
@@ -128,6 +141,7 @@ const ga4TrackingCode = `
 		font-size: 0.8rem;
 		color: var(--accent-color);
 	}
+
     /* フッター内のリンクとコピーライトを中央揃えで配置 */
     .footer-links {
         display: flex;
@@ -137,24 +151,45 @@ const ga4TrackingCode = `
         max-width: 700px;
         margin: 0 auto;
     }
+
     .footer-link {
         color: var(--accent-color);
         text-decoration: none;
         font-size: 0.8rem;
     }
+
     .footer-link:hover {
         text-decoration: underline;
     }
+
     .site-footer p {
         margin: 0; /* pタグのデフォルトマージンをリセット */
     }
 
 	/* --- コンテンツ本文表示のための基本レイアウト設定 --- */
-	.content-area { /* クラス名を抽象化 */
+	.content-area { 
 		/* レイアウト責務の定義 */
-		max-width: var(--content-max-width); /* ページ全体の横幅制御 */
+		max-width: var(--container-max-width);; /* ページ全体の横幅制御 */
 		margin: 0 auto; /* センタリング指定 */
-		padding: 2rem 1.5rem; /* ページ単位の余白 */
+		padding: 2rem var(--side-padding); /* 左右余白を変数にし、スマホでも確保 */
+		width: 100%; /* 横幅が100%を超えないように強制 */
+        /* box-sizing: border-box; */
 	}
+
+	/* narrow=true（404ページなど）の時の「器」の制御 */
+    .content-area.is-narrow {
+        max-width: 700px; /* ここは「あえて狭くしたい」ページ用なので固定値、あるいは 700px 等で維持 */
+        padding-top: 4rem;
+    }
+
+	/* スマホ表示（幅768px以下）での調整 */
+    @media (max-width: 768px) {
+        :root {
+            --side-padding: 1rem; /* スマホでは余白を少し狭くして本文幅を確保 */
+        }
+        .header-container {
+            /* ロゴとメニューを縦に並べたい、もしくは文字を小さくしたい場合はここで調整します */
+            /* 現状はシンプルなので維持でもOK */
+        }
 
 </style>

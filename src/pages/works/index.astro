@@ -73,12 +73,6 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
 </Layout>
 
 <style>
-  /* ページ固有のレイアウト上書き: Layout.astro で定義したカスタムプロパティを使用 */
-  /* `:global` を使用して .content-area に影響を与える */
-  :global(.content-area) {
-    --content-max-width: 700px; /* このページでは 700px に設定 */
-  }
-  
   .page-header {
     margin-bottom: 3rem;
   }
