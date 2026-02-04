@@ -101,9 +101,14 @@ const ga4TrackingCode = `
 
 	/* ヘッダーのスタイル */
 	.site-header {
-		padding: 1.5rem 0;
+		padding: 1rem 0; /* 少しスリムに調整 */
 		border-bottom: 1px solid #eee;
-		margin-bottom: 2rem;
+		/* ★追加：上部に固定 */
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		background: rgba(253, 253, 253, 0.9); /* var(--bg-color)を少し透過 */
+		backdrop-filter: blur(8px); /* 背景をぼかして上品に（Safari等対応） */
 	}
 
 	.header-container {
@@ -171,7 +176,7 @@ const ga4TrackingCode = `
 		/* レイアウト責務の定義 */
 		max-width: var(--container-max-width);; /* ページ全体の横幅制御 */
 		margin: 0 auto; /* センタリング指定 */
-		padding: 2rem var(--side-padding); /* 左右余白を変数にし、スマホでも確保 */
+		padding: 1rem var(--side-padding) 2rem; /* 左右余白を変数にし、スマホでも確保 */
 		width: 100%; /* 横幅が100%を超えないように強制 */
         /* box-sizing: border-box; */
 	}
