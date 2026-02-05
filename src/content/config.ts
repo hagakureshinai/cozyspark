@@ -5,8 +5,8 @@ const worksCollection = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-      description: z.string().optional(),           // 【追加】一言あらすじ（任意）
-    lastUpdated: z.date().optional(),              // 【追加】最終更新日（任意）
+    description: z.string().optional(),           // 一言あらすじ（任意）
+    lastUpdated: z.date().optional(),              // 最終更新日（任意）
     category: z.enum(['series', 'single', 'ss']), // シリーズ, 単発, 掌編
     status: z.enum(['ongoing', 'completed']),   // 連載中, 完結
     order: z.number(),                            // 表示順
@@ -25,6 +25,7 @@ const episodesCollection = defineCollection({
     title: z.string(),    // エピソードのタイトル
     order: z.number(),    // 話数（並び順）
     pubDate: z.date().optional(), // 公開日（任意）
+    description: z.string().optional(), // 各話のあらすじ（任意）
   }),
 });
 
