@@ -1,5 +1,5 @@
 ---
-// src/pages/works/index.astro (修正版)
+// src/pages/works/index.astro
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 
@@ -14,12 +14,58 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 // IDから拡張子を削除するヘルパー関数
 const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
+
+// ★★★ 【編集エリア】ここから ★★★
+// 「初めての方はこちら」に表示したい作品の [ID]（ファイル名）と [見出し] を設定します。
+// 例: src/content/works/observer_love.md なら 'observer_love' と書く
+const pickupConfig = [
+  { id: 'observer_cake', label: '★年下攻め×クール美人受け' },
+  { id: 'beyond_border', label: '★おじさま×おじさま' },
+  { id: 'beyond_control', label: '★えちえち' }
+];
+// ★★★ 【編集エリア】ここまで ★★★
+
+// 設定に基づき、作品データと見出しをセットにする
+const pickupWorks = pickupConfig
+  .map(config => {
+    const work = allWorks.find(w => getSlug(w.id) === config.id);
+    if (!work) return null;
+    return { ...work, pickupLabel: config.label }; // 作品データに見出しを合体させる
+  })
+  .filter((item): item is NonNullable<typeof item> => !!item);
 ---
 
 <Layout title="Works - Cozy Spark">
   <header class="page-header">
     <h1>作品一覧</h1>
   </header>
+
+  {/* --- 【追加】ピックアップ（初めての方はこちら）セクション --- */}
+   {pickupWorks.length > 0 && (
+    <section class="work-category pickup-section">
+      <h2>初めての方へ｜オススメ作品</h2>
+      
+      <ul class="work-list">
+        {pickupWorks.map(work => (
+          <li class="work-item pickup-item">
+            <div class="work-main">
+              {/* 【追加】オススメ理由の見出し */}
+              <div class="pickup-label">{work.pickupLabel}</div>
+              
+              <div class="work-header">
+                <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
+                  <span class="work-title">{work.data.title}</span>
+                </a>
+              </div>
+              {work.data.description && (
+                <p class="work-description">{work.data.description}</p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 
   {seriesWorks.length > 0 && (
     <section class="work-category">
@@ -152,6 +198,23 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
     margin-top: 1rem;
   }
 
+  .pickup-section {
+    padding: 1.5rem;
+    border: 1px solid #E7D1D5;
+    border-radius: 8px;
+  }
+
+    .pickup-item {
+    margin-bottom: 2rem; /* 作品ごとの間隔を少し広げる */
+  }
+
+  .pickup-label {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #A03A3A; /* 少し目立つ色に（お好みで変えてください） */
+    margin-bottom: 0.2rem;
+  }
+
   .work-category {
     margin-bottom: 3rem;
   }
@@ -181,7 +244,7 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
     margin-bottom: 1.5rem; /* 間隔を少し広げる */
     display: flex;
     align-items: flex-start; /* 上揃えに */
-    border-bottom: 1px dotted #eee; /* 項目間の区切り線（任意） */
+    /* border-bottom: 1px dotted #eee; 項目間の区切り線（任意） */
     padding-bottom: 1rem;
   }
 
