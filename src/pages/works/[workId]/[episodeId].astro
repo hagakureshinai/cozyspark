@@ -48,7 +48,8 @@ const { Content } = await render(episode);
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<Layout title={`Cozy Spark- ${work?.data.title} - ${episode.data.title}`}>
+<Layout   title={`Cozy Spark - ${work?.data.title} - ${episode.data.title}`} 
+  narrow={true}>
   <article>
     <header class="novel-header">
       <p class="work-title">
@@ -65,17 +66,17 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
       <div class="nav-links">
         {prevId ? (
           <a href={`${baseUrl}/works/${episode.data.workId}/${prevId}/`} class="prev">
-            &laquo; 前へ
+            &laquo; 前の話へ
           </a>
         ) : (
           <span class="disabled"></span>
         )}
         
-        <a href={`${baseUrl}/works/${episode.data.workId}/`} class="index">目次</a>
+        <a href={`${baseUrl}/works/${episode.data.workId}/`} class="index">目次へ</a>
 
         {nextId ? (
           <a href={`${baseUrl}/works/${episode.data.workId}/${nextId}/`} class="next">
-            次へ &raquo;
+            次の話へ &raquo;
           </a>
         ) : (
           <span class="disabled"></span>
@@ -108,11 +109,16 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
     white-space: pre-wrap; 
   }
 
-  /* Layout.astroから移動した p タグのスタイル */
-  .novel-content p {
+  /* ★修正： :global を使い、Markdownの中の p タグを強制的に指定する */
+  .novel-content :global(p) {
     margin-top: 0;
-    margin-bottom: 2.0em; /* 段落間隔 */
-    text-indent: 1em; /* 行頭字下げ */
+    margin-bottom: 2.0em; /* 段落の間隔 */
+    
+    /* ★重要：text-indentは「段落の最初の1行」にしか効きません。
+       1行目：手入力スペースが消えているので、CSSの 1em で字下げする。
+       2行目以降：手入力スペースが残っている。CSSの indent は効かない。
+       結果として、すべての行が「1文字分」で揃います。 */
+    text-indent: 1em;
   }
 
   /* Layout.astroから移動した組版ルール */

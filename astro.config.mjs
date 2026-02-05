@@ -17,6 +17,7 @@ export default defineConfig({
           // Markdownの各要素を調べて回る関数
           function walk(node) {
             if (node.type === 'text') {
+              
               const rubyRegex = /[｜|]([^｜|]+?)《(.+?)》|([々〇\u4e00-\u9fa5]+)《(.+?)》/g;
               
               // ルビ記法が含まれているかチェック
