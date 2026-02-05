@@ -7,5 +7,3 @@ status: "completed" # completed(完結), ongoing(連載中)
 order: 4            # 一覧に並べる順番（1が一番上）
 isUpdated: true
 ---
-
-本文ここから。
