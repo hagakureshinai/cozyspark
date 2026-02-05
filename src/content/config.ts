@@ -10,7 +10,9 @@ const worksCollection = defineCollection({
     category: z.enum(['series', 'single', 'ss']), // シリーズ, 単発, 掌編
     status: z.enum(['ongoing', 'completed']),   // 連載中, 完結
     order: z.number(),                            // 表示順
-    isUpdated: z.boolean().optional(),            // [P0] 最新更新バッジ判定用（任意）
+    isUpdated: z.boolean().optional(),            // 最新更新バッジ判定用（任意）
+    externalLink: z.string().url().optional(), // 外部リンクURL
+    isDraft: z.boolean().optional(),           // 工事中フラグ
     // 必要に応じて今後追加（例：coverImageなど）
   }),
 });
