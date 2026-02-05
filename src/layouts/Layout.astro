@@ -46,12 +46,12 @@ const ga4TrackingCode = `
 			"content-area", 
 			{ "is-full-height": isFullHeight, "is-narrow": narrow }
 		]}>
-            <slot /> <!-- ここに各ページの内容が入ります -->
+            <slot />
         </main>
 
         {showNavigation && (
             <footer class="site-footer">
-				<a href={`${baseUrl}/policy/`} class="footer-link">Policy</a>
+				<a href={`${baseUrl}/policy/`} class="footer-link">サイトポリシー</a>
                 <p>&copy; Cozy Spark</p>
             </footer>
         )}
@@ -63,6 +63,7 @@ const ga4TrackingCode = `
 		--bg-color: #fdfdfd;
 		--text-color: #333;
 		--accent-color: #888;
+		--link-color: #A03A3A;
 		--container-max-width: 1000px; /* デフォルト値 */
 		--side-padding: 1.5rem; /* 左右の最低余白を定義 */
 	}
@@ -81,6 +82,18 @@ const ga4TrackingCode = `
 	body {
 		margin: 0;
 		padding: 0;
+	}
+
+	/* --- サイト全体のリンクの基本ルール --- */
+	a {
+		color: var(--link-color); /* ★最初からこの色にする */
+		text-decoration: none;
+		transition: opacity 0.2s ease; /* 色の変化ではなく、ふわっとさせる演出用 */
+	}
+
+	a:hover {
+		opacity: 0.7; /* ★マウスを乗せた時に少し薄くして「反応」を示す */
+		text-decoration: underline; /* ホバー時のみ下線を出す（お好みで削除可） */
 	}
 
 	/* isFullHeight=true の時、画面中央に配置*/
@@ -143,7 +156,7 @@ const ga4TrackingCode = `
 	/* フッターのスタイル */
 	.site-footer {
 		text-align: center;
-		padding: 4rem 0 2rem;
+		padding: 2rem 0 2rem;
 		font-size: 0.8rem;
 		color: var(--accent-color);
 	}
