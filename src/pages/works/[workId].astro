@@ -90,20 +90,28 @@ const categoryNames = {
       <ul class="episode-list">
         {episodes.map((episode) => {
           const episodeId = cleanId(episode.id);
-          // 作品が更新フラグON かつ 現在のエピソードが最新話かどうか
           const isLatestAndUpdated = shouldShowWorkUpdateBadge && episodeId === latestEpisodeId;
 
           return (
             <li>
               <a href={`${baseUrl}/works/${cleanId(work.id)}/${episodeId}/`}>
                 <div class="episode-info-container">
+                  {/* 左側：タイトルとUPバッジ */}
                   <div class="episode-main">
                     <span class="title">{episode.data.title}</span>
                     {isLatestAndUpdated && <span class="badge-updated">UP</span>}
                   </div>
                   
-                  {episode.data.description && (
-                    <span class="episode-description">{episode.data.description}</span>
+                  {/* 右側（スマホでは下）：文字数とあらすじ */}
+                  {(episode.data.wordCount || episode.data.description) && (
+                    <div class="episode-details">
+                      {episode.data.wordCount && (
+                        <span class="word-count">{episode.data.wordCount}</span>
+                      )}
+                      {episode.data.description && (
+                        <span class="episode-description">{episode.data.description}</span>
+                      )}
+                    </div>
                   )}
                 </div>
               </a>
@@ -114,10 +122,10 @@ const categoryNames = {
       {episodes.length === 0 && <p>エピソードはまだありません。</p>}
     </section>
 
-  </div>
 </Layout>
 
 <style>
+  /* --- 1. 作品ヘッダーエリア --- */
   .work-header {
     margin-bottom: 3rem;
     border-bottom: 1px solid #eee;
@@ -128,24 +136,29 @@ const categoryNames = {
     font-weight: normal;
     margin-bottom: 1rem;
   }
+  .work-description {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    color: #444;
+  }
   .work-meta {
     font-size: 0.9rem;
     color: #888;
-    /* 要素が入り切らない時に折り返せるようにする */
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.8rem; /* 要素間の隙間 */
+    gap: 0.8rem;
   }
-
-  /* --- ★スマホ表示用の調整 --- */
-  @media (max-width: 768px) {
-    .work-date {
-      flex-basis: 100%; /* ★幅を100%にして強制的に改行させる */
-      margin-top: 0.2rem; /* 上の要素との微調整 */
-    }
+  /* 作品ステータスバッジ */
+  .badge-ongoing, .badge-completed {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
   }
+  .badge-ongoing { background: #4F8FA8; color: #fff; }
+  .badge-completed { background: #7FAF8F; color: #fff; }
 
+  /* --- 2. 目次リストエリア --- */
   .section-title {
     font-size: 1.2rem;
     font-weight: normal;
@@ -159,90 +172,98 @@ const categoryNames = {
   .episode-list li {
     border-bottom: 1px dashed #eee;
   }
-
   .episode-list a {
-    display: flex;
+    display: block; /* 領域全体をリンクに */
     padding: 1rem 0;
-    align-items: center;
-    font-size: 1.1rem;
-    font-weight: bold;
-    /* ★ hover時にマーカーまで下線が引かれないように調整 */
-    text-decoration: none; 
+    text-decoration: none;
   }
-
-  /* ★ タイトル部分だけに下線を引く設定に変更 */
   .episode-list a:hover .title {
     text-decoration: underline;
   }
 
-  .episode-list .title {
-    display: flex;
-    align-items: center;
-  }
-
-  /* ★ 行頭のマーカーを追加 */
-  .episode-list .title::before {
-    content: ""; /* 文字ではなく図形にする場合 */
-    display: inline-block;
-    width: 4px;   /* マーカーの幅 */
-    height: 1.2rem; /* マーカーの高さ */
-    background-color: var(--accent-color); /* マーカーの色（サイトのアクセント色） */
-    margin-right: 1rem; /* タイトルとの距離 */
-    border-radius: 2px; /* 少し角を丸める */
-    opacity: 0.5; /* 少し透かして上品に */
-  }
-
-  /* ★ 新しく追加：タイトルとあらすじを包むコンテナ */
+  /* タイトル・文字数・あらすじを包むコンテナ（PCでは横並び） */
   .episode-info-container {
     display: flex;
-    flex-direction: row;    /* デフォルト（PC）は横並び */
-    align-items: center;  /* ★上下中央で揃える */
-    gap: 1.5rem;            /* タイトルとあらすじの間隔 */
+    align-items: center; 
+    gap: 1.5rem;
     width: 100%;
   }
 
+  /* タイトル部分 */
   .episode-main {
     display: flex;
     align-items: center;
-    flex-shrink: 0; /* タイトルが潰れないように固定 */
+    flex-shrink: 0;
+  }
+  .episode-main .title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    color: var(--link-color);
+  }
+  /* 行頭のマーカー */
+  .episode-main .title::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 1.2rem;
+    background-color: var(--accent-color);
+    margin-right: 1rem;
+    border-radius: 2px;
+    opacity: 0.5;
   }
 
-  /* ★ あらすじのスタイル */
-  .episode-description {
+  /* 文字数とあらすじのセット */
+  .episode-details {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
     font-size: 0.85rem;
-    font-weight: normal; /* あらすじは細字に */
-    color: #777;        /* 少し薄い色に */
+    color: #777;
+  }
+  .word-count {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .episode-description {
     line-height: 1.4;
   }
 
-  /* --- ★ スマホ表示用の切り替え（画面幅が768px以下の場合） --- */
-  @media (max-width: 768px) {
-    .episode-info-container {
-      flex-direction: column; /* 縦並びに変更 */
-      align-items: flex-start;
-      gap: 0.3rem;            /* 縦の隙間を狭く */
-    }
-    
-    .episode-description {
-        padding-left: 1.4rem; /* 前に付けたマーカーの分だけ少し右に寄せる */
-    }
-  }
-  
-  /* 【バッジのCSS調整】リンクの中に配置し、文字サイズに合わせて調整 */
+  /* UPバッジ */
   .badge-updated {
-    font-size: 0.7rem; 
+    font-size: 0.7rem;
     font-weight: bold;
     color: #fff;
-    background-color: #A03A3A; 
+    background-color: #D4A017;
     padding: 1px 6px;
     border-radius: 2px;
-    line-height: 1.5; 
-    margin-left: 1rem; /* タイトルとの間にスペースを確保 */
+    margin-left: 0.8rem;
   }
-  
+
   .back-to-top {
     margin-top: 5rem;
     text-align: center;
   }
 
+  /* --- 3. スマホ表示調整 (768px以下) --- */
+  @media (max-width: 768px) {
+    /* ヘッダーの日付を改行 */
+    .work-date {
+      flex-basis: 100%;
+      margin-top: 0.2rem;
+    }
+
+    /* 目次を縦並びに（タイトル / 文字数 / あらすじ の3段） */
+    .episode-info-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3rem;
+    }
+    .episode-details {
+      flex-direction: column;
+      gap: 0.2rem;
+      padding-left: 1.4rem; /* マーカーの分だけ字下げ */
+    }
+  }
 </style>

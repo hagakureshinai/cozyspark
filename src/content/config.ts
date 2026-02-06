@@ -28,6 +28,7 @@ const episodesCollection = defineCollection({
     order: z.number(),    // 話数（並び順）
     pubDate: z.date().optional(), // 公開日（任意）
     description: z.string().optional(), // 各話のあらすじ（任意）
+    wordCount: z.string().optional(), // 例: "2,500字"
   }),
 });
 
