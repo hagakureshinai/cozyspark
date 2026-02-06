@@ -61,7 +61,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
     <div class="novel-content">
       <Content />
         {/* 次の話（nextId）がない場合のみ Fin. を表示 */}
-        {!nextId && <p class="fin">─ Fin. ─</p>}
+        {!nextId && <p class="fin">Fin.</p>}
     </div>
 
     <nav class="episode-navigation">
@@ -204,12 +204,35 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
     }
   }
 
-  .fin {
+  /* .fin {
   text-align: center;
-  margin: 5rem 0; /* 前後の間隔をしっかり空ける */
+  margin: 5rem 0;
   font-size: 1.2rem;
   letter-spacing: 0.2rem;
   color: var(--text-color);
+  text-indent: 0;
+  } */
+
+  .novel-content .fin {
+  text-align: center;
+  margin: 5rem 0;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  
+  /* 1. 優先順位を上げて字下げを確実にリセット */
+  text-indent: 0 !important;
+
+  /* 2. 文字間隔の微調整 */
+  letter-spacing: 0.2rem;
+  
+  /* 
+     ★重要★
+     letter-spacing は「文字の右側」に余白を作ります。
+     そのため「Fin.」の最後の「.」の右側にも 0.2rem の余白ができてしまい、
+     その分だけ全体が「左」に押され、結果として右にずれて見えます。
+     同じ分だけ左側に padding を入れることで、左右を等しくします。
+  */
+  padding-left: 0.2rem;
   }
 
 </style>
