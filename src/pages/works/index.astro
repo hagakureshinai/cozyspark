@@ -19,7 +19,7 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
 // 「初めての方はこちら」に表示したい作品の [ID]（ファイル名）と [見出し] を設定します。
 // 例: src/content/works/observer_love.md なら 'observer_love' と書く
 const pickupConfig = [
-  { id: 'observer_cake', label: '＊年下攻め×クール美人受け 観測者シリーズ試し読み' },
+  { id: 'observer_cake', label: '＊年下攻×クール受 観測者シリーズ試し読み' },
   { id: 'beyond_border', label: '＊おじさま×おじさま' },
   { id: 'beyond_control', label: '＊えちえち' }
 ];
@@ -35,37 +35,62 @@ const pickupWorks = pickupConfig
   .filter((item): item is NonNullable<typeof item> => !!item);
 ---
 
-<Layout title="Works - Cozy Spark">
+<Layout title="Cozy Spark - 作品一覧">
   <header class="page-header">
     <h1>作品一覧</h1>
   </header>
 
-  {/* --- 【追加】ピックアップ（初めての方はこちら）セクション --- */}
-   {pickupWorks.length > 0 && (
-    <section class="work-category pickup-section">
-      <h2>初めての方へ｜オススメ作品</h2>
-      
-      <ul class="work-list">
-        {pickupWorks.map(work => (
-          <li class="work-item pickup-item">
-            <div class="work-main">
+  {/* --- 【修正版】ピックアップ（初めての方はこちら）セクション --- */}
+{pickupWorks.length > 0 && (
+  <section class="work-category pickup-section">
+    <h2>初めての方へ｜オススメ作品</h2>
+    
+    <ul class="work-list">
+      {pickupWorks.map(work => (
+        <li class="work-item pickup-item">
+          <div class="work-main">
               {/* オススメ理由の見出し */}
               <div class="pickup-label">{work.pickupLabel}</div>
               
               <div class="work-header">
-                <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
-                  <span class="work-title">{work.data.title}</span>
-                </a>
+                {/* タイトルリンク：外部リンクか自サイトリンクかの2択 */}
+                {work.data.externalLink ? (
+                  <a href={work.data.externalLink} target="_blank" rel="noopener noreferrer">
+                    <span class="work-title">{work.data.title}</span>
+                    <span class="icon-external">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y1="3"></line>
+                      </svg>
+                    </span>
+                  </a>
+                ) : (
+                  <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
+                    <span class="work-title">{work.data.title}</span>
+                  </a>
+                )}
+
+                {/* ピックアップ用：R18バッジのみを表示 */}
+                <div class="work-badges">
+                  {work.data.isR18 && <span class="badge-r18">R18</span>}
+                </div>
+
+                {/* ピックアップ用：文字数のみを表示 */}
+                <div class="work-meta">
+                  {work.data.wordCount && <span class="work-word-count">{work.data.wordCount}</span>}
+                </div>
               </div>
+              
               {work.data.description && (
                 <p class="work-description">{work.data.description}</p>
               )}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
 
   {seriesWorks.length > 0 && (
     <section class="work-category">
@@ -95,6 +120,7 @@ const pickupWorks = pickupConfig
                   </a>
                 )}
                 <div class="work-badges">
+                  {work.data.isR18 && <span class="badge-r18">R18</span>}
                   {work.data.status === 'ongoing' ? (
                     <span class="badge-ongoing">連載中</span>
                   ) : (
@@ -103,15 +129,20 @@ const pickupWorks = pickupConfig
                   {work.data.isUpdated && <span class="badge-updated">UP</span>}
                 </div>
 
-                {work.data.lastUpdated && (
-                  <time class="work-date">
-                    {work.data.lastUpdated.toLocaleDateString('ja-JP', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit'
-                    }).replace(/\//g, '.')}
-                  </time>
-                )}
+                  <div class="work-meta">
+                    {/* ★追加：文字数（wordCountがある時だけ表示） */}
+                    {work.data.wordCount && <span class="work-word-count">{work.data.wordCount}</span>}
+
+                    {work.data.lastUpdated && (
+                      <time class="work-date">
+                        {work.data.lastUpdated.toLocaleDateString('ja-JP', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit'
+                        }).replace(/\//g, '.')}
+                      </time>
+                    )}
+                  </div>
               </div>
               
               {work.data.description && (
@@ -153,6 +184,7 @@ const pickupWorks = pickupConfig
                   </a>
                 )}
                 <div class="work-badges">
+                  {work.data.isR18 && <span class="badge-r18">R18</span>}
                   {work.data.status === 'ongoing' && <span class="badge-ongoing">連載中</span>}
                   {work.data.isUpdated && <span class="badge-updated">UP</span>}
                 </div>
@@ -380,9 +412,42 @@ const pickupWorks = pickupConfig
     font-size: 0.7rem;
     font-weight: bold;
     color: #fff;
-    background-color: #A03A3A; /* 赤系 */
+    background-color: #D4A017;
     padding: 1px 6px;
     border-radius: 2px;
     line-height: 1.5; /* テキストの位置調整 */
+  }
+
+  /* 18バッジのスタイル（パッと見て分かる赤系） */
+  .badge-r18 {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #d32f2f; /* 警告色としての赤 */
+    padding: 1px 6px;
+    border-radius: 2px;
+  }
+
+  /* 文字数と日付をまとめるエリア */
+  .work-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-left: 0;
+  }
+
+  /* 文字数のスタイル（日付と同じくらい控えめに） */
+  .work-word-count {
+    font-size: 0.8rem;
+    color: #888;
+    font-family: sans-serif;
+  }
+
+  /* スマホ等で日付が落ちる場合の調整 */
+  @media (max-width: 768px) {
+    .work-meta {
+      width: 100%;
+      margin-top: 0.2rem;
+    }
   }
 </style>

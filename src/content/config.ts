@@ -13,6 +13,8 @@ const worksCollection = defineCollection({
     isUpdated: z.boolean().optional(),            // 最新更新バッジ判定用（任意）
     externalLink: z.string().url().optional(), // 外部リンクURL
     isDraft: z.boolean().optional(),           // 工事中フラグ
+    isR18: z.boolean().default(false), // R18かどうか（デフォルトはfalse）
+    wordCount: z.string().optional(),  // 文字数（例: "約10,000字" や "1.5万字"）
     // 必要に応じて今後追加（例：coverImageなど）
   }),
 });

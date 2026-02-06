@@ -4,6 +4,8 @@ description: "短編｜ 12月。悠也の卒業研究を指導する圭の胸に
 lastUpdated: 2026-02-05
 category: "series"  # series(シリーズ), single(単発), ss(掌編)
 status: "completed" # completed(完結), ongoing(連載中)
-order: 4            # 一覧に並べる順番（1が一番上）
 isUpdated: true
+isR18: true
+wordCount: "約1.5万字"
+order: 4            # 一覧に並べる順番（1が一番上）
 ---
