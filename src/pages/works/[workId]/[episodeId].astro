@@ -105,7 +105,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
   .novel-content {
     line-height: 2;
     font-size: 1.1rem;
-    margin-bottom: 5rem;
+    margin-bottom: 2rem;
     white-space: pre-wrap; 
   }
 
@@ -127,6 +127,12 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
     text-indent: 0;
   }
 
+  :global(.site-footer) {
+    /* 固定ナビ（前へ/次へ）の高さ分＋α、フッターの「内側」に下余白を作る */
+    /* これにより、フッターの文字が固定ナビの上に押し上げられます */
+    padding-bottom: 6rem !important;
+  }
+
   /* ★修正：エピソードナビゲーションを全デバイスで固定 */
   .episode-navigation {
     position: fixed;
@@ -143,21 +149,40 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   .nav-links {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
-    /* ★修正：PCでもコンテンツ幅に合わせて中央に寄せる */
-    max-width: var(--container-max-width);
+    max-width: var(--container-max-width); /* PCでもコンテンツ幅に合わせて中央に寄せる */
     margin: 0 auto;
     padding: 0 var(--side-padding);
     box-sizing: border-box;
+  }
+
+  /* 3つの要素（aタグとspanタグ）すべてを均等な幅にする */
+  .nav-links > * {
+    flex: 1;
+    display: block;
+  }
+
+  /* それぞれのテキストの位置を固定する */
+  .nav-links .prev,
+  .nav-links .disabled:first-child {
+    text-align: left;
+  }
+
+  .nav-links .index {
+    text-align: center;
+  }
+
+  .nav-links .next,
+  .nav-links .disabled:last-child {
+    text-align: right;
   }
 
   .nav-links a {
     text-decoration: none;
     color: var(--text-color);
     font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-    /* 枠線を消してスッキリさせる（お好みで残してもOK） */
+    padding: 0.5rem 0; /* 左右のpaddingはflex:1に任せるので0にする */
     transition: opacity 0.2s;
   }
   
@@ -166,9 +191,9 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
   }
 
   /* ★修正：本文がナビに隠れないよう、記事末尾に余白を確保（全デバイス共通） */
-  article {
-    padding-bottom: 5rem;
-  }
+  /* article {
+    padding-bottom: 0rem;
+  } */
 
   /* スマホ用の微調整（文字サイズなど） */
   @media (max-width: 768px) {
