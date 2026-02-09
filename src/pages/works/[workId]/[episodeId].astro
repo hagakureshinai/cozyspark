@@ -45,11 +45,23 @@ export async function getStaticPaths() {
 const { episode, work, prevId, nextId } = Astro.props;
 const { Content } = await render(episode);
 
+// ★ SEO用の設定
+// タイトル： 「話のタイトル（作品名）」 
+const pageTitle = `${episode.data.title}（${work?.data.title}）`;
+
+// 説明文： mdファイルのfrontmatterに 'description' があればそれを使い、
+// なければ作品全体のあらすじやデフォルト文を使う
+const pageDescription = episode.data.description || `${work?.data.title} 第${episode.data.order}話：${episode.data.title}のページです。`;
+
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<Layout   title={`Cozy Spark - ${work?.data.title} - ${episode.data.title}`} 
-  narrow={true}>
+<Layout 
+  title={pageTitle} 
+  description={pageDescription}
+  narrow={true}
+>
+
   <article>
     <header class="novel-header">
       <p class="work-title">
