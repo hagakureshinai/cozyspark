@@ -1,6 +1,5 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-// import sitemap from '@astrojs/sitemap'; // サイトマップの設定
 
 export default defineConfig({
   // サイトのドメイン（末尾のスラッシュはなし）
