@@ -45,6 +45,16 @@ if (episodes.length > 0) {
 // work.data.isUpdatedがtrueかどうかを取得し、下のテンプレートで使用する
 const shouldShowWorkUpdateBadge = work.data.isUpdated;
 
+// ★ SEO用の設定
+// タイトル： 「作品名（目次・作品詳細）」
+const pageTitle = `${work.data.title} 作品詳細・目次`;
+
+// 説明文： 作品のあらすじがあればそれを使用し、なければデフォルト文を生成
+// 100文字程度に収まるようにする
+const pageDescription = work.data.description 
+  ? work.data.description.substring(0, 120) 
+  : `${work.data.title}の作品情報とエピソード一覧のページです。`;
+
 // カテゴリ名の変換マップ
 const categoryNames = {
   'series': '観測者シリーズ',
@@ -53,7 +63,7 @@ const categoryNames = {
 };
 ---
 
-<Layout title={`Cozy Spark - ${work.data.title} - 目次 `}>
+<Layout title={pageTitle} description={pageDescription}>
   <div class="work-detail-content">
     <header class="work-header">
       <h1 class="work-title">{work.data.title}</h1>
