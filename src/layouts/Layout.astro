@@ -3,6 +3,7 @@
 interface Props {
 	title: string;
 	description?: string; // ★ descriptionを追加（任意）
+	ogImage?: string; // ★ 個別に画像を指定したい場合用
     showNavigation?: boolean;
     isFullHeight?: boolean; // 高さいっぱいに使うページ用フラグ
 	narrow?: boolean; // コンテンツ幅を狭くするオプション
@@ -11,6 +12,7 @@ interface Props {
 const { 
     title, 
     description = "Cozy Spark - 一次創作BL小説サイト", // ★ デフォルトの文章
+	ogImage = "/assets/img/ogp.png", // ★ デフォルトのOGP画像パス
     showNavigation = true, 
     isFullHeight = false, 
     narrow = false 
@@ -22,6 +24,17 @@ const siteName = "Cozy Spark";
 // ★ タイトルの形式を「ページタイトル | サイト名」にする
 // すでにタイトルにサイト名が含まれている場合は重ねない処理
 const formattedTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+
+// ★予備URLを自分のドメインにする
+const siteOrigin = Astro.site ? Astro.site.origin : "https://hagakureshinai.github.io";
+
+// ★正規URLの組み立て
+// Astro.url.pathname には /cozyspark が含まれているので siteOrigin と合体させる
+const canonicalURL = new URL(Astro.url.pathname, siteOrigin);
+
+// ★OGP画像の絶対URL
+// 外部サービス（Xなど）が読み込めるように、baseを含めたフルパスを作る
+const socialImageURL = new URL(baseUrl + ogImage, siteOrigin);
 
 // ★ GA4のトラッキングコード
 const ga4TrackingCode = `
@@ -40,14 +53,31 @@ const ga4TrackingCode = `
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-		<!-- SEO用タグ -->
+		<!-- Favicon設定 -->
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/x-icon" href={`${baseUrl}/favicon.ico`} />
+		<link rel="apple-touch-icon" href={`${baseUrl}/apple-touch-icon.png`} />
+
+        <!-- 基本SEO -->
         <title>{formattedTitle}</title>
         <meta name="description" content={description} />
+        <link rel="canonical" href={canonicalURL} />
 
-		<title>{title}</title>
-		<Fragment set:html={ga4TrackingCode} />
+        <!-- OGP (Open Graph Protocol) -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:title" content={formattedTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={socialImageURL} />
+
+        <!-- X (Twitter) Card -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={formattedTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={socialImageURL} />
+        
+        <Fragment set:html={ga4TrackingCode} />
 	</head>
 	<body>
         {showNavigation && (
