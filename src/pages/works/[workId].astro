@@ -1,6 +1,6 @@
 ---
 // src/pages/works/[workId].astro
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 
 export async function getStaticPaths() {
@@ -23,18 +23,34 @@ export async function getStaticPaths() {
 
     return {
       params: { workId: workSlug }, // 拡張子なしのIDをURLにする
-      props: { work, episodes: workEpisodes },
+      // 【firstEpisode を追加】
+      props: { 
+        work, 
+        episodes: workEpisodes,
+        firstEpisode: workEpisodes.length > 0 ? workEpisodes[0] : null
+      },
     };
   });
 }
 
-const { work, episodes } = Astro.props;
+// 【firstEpisode を受け取る】
+const { work, episodes, firstEpisode } = Astro.props;
+
+// 【isShort フラグを見る】
+const isShortStory = work.data.isShort;
+
+let Content = null;
+if (isShortStory && firstEpisode) {
+  const rendered = await render(firstEpisode);
+  Content = rendered.Content;
+}
+
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 // エピソード用にも同じ関数を用意
 const cleanId = (id: string) => id.split('/').pop()?.replace(/\.[^/.]+$/, "") || id;
 
-// 【新規追加】最新エピソードのIDを取得
+// 最新エピソードのIDを取得
 let latestEpisodeId: string | null = null;
 if (episodes.length > 0) {
     // episodesは既にorder順にソートされているため、最後の要素が最新
@@ -47,7 +63,10 @@ const shouldShowWorkUpdateBadge = work.data.isUpdated;
 
 // ★ SEO用の設定
 // タイトル： 「作品名（目次・作品詳細）」
-const pageTitle = `${work.data.title} 作品詳細・目次`;
+// 【タイトルを短編かシリーズかで微調整】
+const pageTitle = isShortStory 
+  ? work.data.title 
+  : `${work.data.title} 作品詳細・目次`;
 
 // 説明文： 作品のあらすじがあればそれを使用し、なければデフォルト文を生成
 // 100文字程度に収まるようにする
@@ -95,43 +114,55 @@ const categoryNames = {
       </div>
     </header>
 
-    <section class="episode-list-section">
-      <h2 class="section-title">目次</h2>
-      <ul class="episode-list">
-        {episodes.map((episode) => {
-          const episodeId = cleanId(episode.id);
-          const isLatestAndUpdated = shouldShowWorkUpdateBadge && episodeId === latestEpisodeId;
+    {isShortStory && Content ? (
+      /* --- 短編・掌編の場合：本文を直接表示 --- */
+      <article class="story-body">
+        <div class="novel-content">
+          <Content />
+          {/* 【↓ここが追加点：Fin.を表示】 */}
+          <p class="fin">Fin.</p>
+        </div>
+      </article>
+    ) : (
+      /* --- シリーズ作品の場合：従来の目次を表示 --- */
+      <section class="episode-list-section">
+        <h2 class="section-title">目次</h2>
+        <ul class="episode-list">
+          {episodes.map((episode) => {
+            const episodeId = cleanId(episode.id);
+            const isLatestAndUpdated = shouldShowWorkUpdateBadge && episodeId === latestEpisodeId;
 
-          return (
-            <li>
-              <a href={`${baseUrl}/works/${cleanId(work.id)}/${episodeId}/`}>
-                <div class="episode-info-container">
-                  {/* 左側：タイトルとUPバッジ */}
-                  <div class="episode-main">
-                    <span class="title">{episode.data.title}</span>
-                    {isLatestAndUpdated && <span class="badge-updated">UP</span>}
-                  </div>
-                  
-                  {/* 右側（スマホでは下）：文字数とあらすじ */}
-                  {(episode.data.wordCount || episode.data.description) && (
-                    <div class="episode-details">
-                      {episode.data.wordCount && (
-                        <span class="word-count">{episode.data.wordCount}</span>
-                      )}
-                      {episode.data.description && (
-                        <span class="episode-description">{episode.data.description}</span>
-                      )}
+            return (
+              <li>
+                <a href={`${baseUrl}/works/${cleanId(work.id)}/${episodeId}/`}>
+                  <div class="episode-info-container">
+                    {/* 左側：タイトルとUPバッジ */}
+                    <div class="episode-main">
+                      <span class="title">{episode.data.title}</span>
+                      {isLatestAndUpdated && <span class="badge-updated">UP</span>}
                     </div>
-                  )}
-                </div>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-      {episodes.length === 0 && <p>エピソードはまだありません。</p>}
-    </section>
-
+                    
+                    {/* 右側（スマホでは下）：文字数とあらすじ */}
+                    {(episode.data.wordCount || episode.data.description) && (
+                      <div class="episode-details">
+                        {episode.data.wordCount && (
+                          <span class="word-count">{episode.data.wordCount}</span>
+                        )}
+                        {episode.data.description && (
+                          <span class="episode-description">{episode.data.description}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+        {episodes.length === 0 && <p>エピソードはまだありません。</p>}
+      </section>
+    )}
+  </div>
 </Layout>
 
 <style>
@@ -159,6 +190,7 @@ const categoryNames = {
     align-items: center;
     gap: 0.8rem;
   }
+
   /* 作品ステータスバッジ */
   .badge-ongoing, .badge-completed {
     padding: 2px 8px;
@@ -212,6 +244,7 @@ const categoryNames = {
     align-items: center;
     color: var(--link-color);
   }
+
   /* 行頭のマーカー */
   .episode-main .title::before {
     content: "";
@@ -276,4 +309,31 @@ const categoryNames = {
       padding-left: 1.4rem; /* マーカーの分だけ字下げ */
     }
   }
+
+/* 【本文用のスタイルを追加】 */
+  .story-body {
+    line-height: 2;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    /* 小説らしい縦の余白 */
+    margin-top: 3rem;
+    /* 改行を反映させる設定（Markdownの仕様に合わせて調整） */
+    white-space: pre-wrap; 
+  }
+
+  /* ルビの調整 */
+  .story-body :global(ruby) {
+    ruby-align: center;
+  }
+  .story-body :global(rt) {
+    font-size: 0.6em;
+  }
+
+    /* 【↓ここが変更・追加点：Fin.とナビゲーションのスタイル】 */
+  .fin {
+  text-align: center;
+  margin: 5rem 0;
+  font-size: 1.2rem;
+  color: var(--text-color);
+
 </style>

@@ -15,6 +15,7 @@ const worksCollection = defineCollection({
     isDraft: z.boolean().optional(),           // 工事中フラグ
     isR18: z.boolean().default(false), // R18かどうか（デフォルトはfalse）
     wordCount: z.string().optional(),  // 文字数（例: "約10,000字" や "1.5万字"）
+    isShort: z.boolean().default(false), 
     // 必要に応じて今後追加（例：coverImageなど）
   }),
 });
