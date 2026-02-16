@@ -27,3 +27,6 @@
 - **フェーズ 6: 作品一覧の整理**
   - [ ] `src/components/WorkCard.astro` の作成。
   - [ ] `src/pages/works/index.astro` のリファクタリング（WorkCardへの置き換え）。
+
+## 運用・保守
+サイトの更新手順や配色の変更方法については、[運用マニュアル (MANUAL.md)](./MANUAL.md) を参照してください。
