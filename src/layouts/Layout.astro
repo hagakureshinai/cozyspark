@@ -1,21 +1,25 @@
 ---
 // src/layouts/Layout.astro
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
 interface Props {
 	title: string;
 	description?: string; // ★ descriptionを追加（任意）
 	ogImage?: string; // ★ 個別に画像を指定したい場合用
-    showNavigation?: boolean;
-    isFullHeight?: boolean; // 高さいっぱいに使うページ用フラグ
+	showNavigation?: boolean;
+	isFullHeight?: boolean; // 高さいっぱいに使うページ用フラグ
 	narrow?: boolean; // コンテンツ幅を狭くするオプション
 }
 
-const { 
-    title, 
-    description = "Cozy Spark - 一次創作BL小説サイト", // ★ デフォルトの文章
+const {
+	title,
+	description = "Cozy Spark - 一次創作BL小説サイト", // ★ デフォルトの文章
 	ogImage = "/assets/img/ogp.png", // ★ デフォルトのOGP画像パス
-    showNavigation = true, 
-    isFullHeight = false, 
-    narrow = false 
+	showNavigation = true,
+	isFullHeight = false,
+	narrow = false,
 } = Astro.props;
 
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -23,10 +27,14 @@ const siteName = "Cozy Spark";
 
 // ★ タイトルの形式を「ページタイトル | サイト名」にする
 // すでにタイトルにサイト名が含まれている場合は重ねない処理
-const formattedTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+const formattedTitle = title.includes(siteName)
+	? title
+	: `${title} | ${siteName}`;
 
 // ★予備URLを自分のドメインにする
-const siteOrigin = Astro.site ? Astro.site.origin : "https://hagakureshinai.github.io";
+const siteOrigin = Astro.site
+	? Astro.site.origin
+	: "https://hagakureshinai.github.io";
 
 // ★正規URLの組み立て
 // Astro.url.pathname には /cozyspark が含まれているので siteOrigin と合体させる
@@ -48,6 +56,7 @@ const ga4TrackingCode = `
 </script>
 `;
 ---
+
 <!doctype html>
 <html lang="ja">
 	<head>
@@ -55,209 +64,69 @@ const ga4TrackingCode = `
 		<meta name="viewport" content="width=device-width" />
 
 		<!-- Favicon設定 -->
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" type="image/x-icon" href={`${baseUrl}/favicon.ico`} />
 		<link rel="apple-touch-icon" href={`${baseUrl}/apple-touch-icon.png`} />
 
-        <!-- 基本SEO -->
-        <title>{formattedTitle}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={canonicalURL} />
+		<!-- 基本SEO -->
+		<title>{formattedTitle}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalURL} />
 
-        <!-- OGP (Open Graph Protocol) -->
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={canonicalURL} />
-        <meta property="og:title" content={formattedTitle} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={socialImageURL} />
+		<!-- OGP (Open Graph Protocol) -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={formattedTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={socialImageURL} />
 
-        <!-- X (Twitter) Card -->
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={formattedTitle} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={socialImageURL} />
-        
-        <Fragment set:html={ga4TrackingCode} />
+		<!-- X (Twitter) Card -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={formattedTitle} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={socialImageURL} />
+
+		<Fragment set:html={ga4TrackingCode} />
 	</head>
 	<body>
-        {showNavigation && (
-            <header class="site-header">
-                <div class="header-container">
-                    <a href={`${baseUrl}/`} class="site-logo">Cozy Spark</a>
-                    <nav class="site-nav">
-                        <a href={`${baseUrl}/works/`}>作品一覧へ</a>
-                    </nav>
-                </div>
-            </header>
-        )}
+		{showNavigation && <Header />}
 
-        <main class:list={[
-			"content-area", 
-			{ "is-full-height": isFullHeight, "is-narrow": narrow }
-		]}>
-            <slot />
-        </main>
+		<main
+			class:list={[
+				"content-area",
+				{ "is-full-height": isFullHeight, "is-narrow": narrow },
+			]}
+		>
+			<slot />
+		</main>
 
-        {showNavigation && (
-            <footer class="site-footer">
-				<a href={`${baseUrl}/policy/`} class="footer-link">サイトポリシー</a>
-                <p>&copy; Cozy Spark</p>
-            </footer>
-        )}
+		{showNavigation && <Footer />}
 	</body>
 </html>
 
-<style is:global>
-	:root {
-		--bg-color: #fdfdfd;
-		--text-color: #333;
-		--accent-color: #888;
-		--link-color: #A03A3A;
-		--container-max-width: 1000px; /* デフォルト値 */
-		--side-padding: 1.5rem; /* 左右の最低余白を定義 */
-	}
-	
-	/* ★重要：すべての要素の計算方法を「余白を含める」に統一 */
-    *, *::before, *::after {
-        box-sizing: border-box;
-    }
-
-	html {
-		font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif;
-		background: var(--bg-color);
-		color: var(--text-color);
-	}
-
-	body {
-		margin: 0;
-		padding: 0;
-	}
-
-	/* --- サイト全体のリンクの基本ルール --- */
-	a {
-		color: var(--link-color); /* ★最初からこの色にする */
-		text-decoration: none;
-		transition: opacity 0.2s ease; /* 色の変化ではなく、ふわっとさせる演出用 */
-	}
-
-	a:hover {
-		opacity: 0.7; /* ★マウスを乗せた時に少し薄くして「反応」を示す */
-		text-decoration: underline; /* ホバー時のみ下線を出す（お好みで削除可） */
-	}
-
-	/* isFullHeight=true の時、画面中央に配置*/
-    .content-area.is-full-height {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        padding: 2rem; /* paddingの重複定義を避け、ここで完結させる */
-    }
-
-	/* narrow=true の時の「器」の制御 */
-    .content-area.is-narrow {
-        max-width: 700px;
-        padding-top: 4rem; /* 404で必要だった余白をレイアウト側で定義 */
-    }
-
-	/* ヘッダーのスタイル */
-	.site-header {
-		padding: 1rem 0; /* 少しスリムに調整 */
-		border-bottom: 1px solid #eee;
-		/* ★追加：上部に固定 */
-		position: sticky;
-		top: 0;
-		z-index: 100;
-		background: rgba(253, 253, 253, 0.75); /* var(--bg-color)を少し透過 */
-		-webkit-backdrop-filter: blur(8px);
-		backdrop-filter: blur(8px); /* 背景をぼかして上品に（Safari等対応） */
-	}
-
-	.header-container {
-		max-width: var(--container-max-width); /* 固定値をやめ、共通の変数を使用 */
-		margin: 0 auto;
-		padding: 0 var(--side-padding); /* 変数を使用 */
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		/* gap: 1rem; スマホで要素が詰まった時に折り返さない、または調整しやすくする */
-	}
-
-	.site-logo {
-		font-size: 1.2rem;
-		text-decoration: none;
-		color: var(--text-color);
-		letter-spacing: 0.1rem;
-		font-weight: normal;
-	}
-
-	.site-nav a {
-		font-size: 0.9rem;
-		text-decoration: none;
-		color: var(--accent-color);
-	}
-
-	.site-nav a:hover {
-		text-decoration: underline;
-	}
-
-	/* フッターのスタイル */
-	.site-footer {
-		text-align: center;
-		padding: 2rem 0 2rem;
-		font-size: 0.8rem;
-		color: var(--accent-color);
-	}
-
-    /* フッター内のリンクとコピーライトを中央揃えで配置 */
-    .footer-links {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 1rem; /* 要素間のスペース */
-        max-width: 700px;
-        margin: 0 auto;
-    }
-
-    .footer-link {
-        color: var(--accent-color);
-        text-decoration: none;
-        font-size: 0.8rem;
-    }
-
-    .footer-link:hover {
-        text-decoration: underline;
-    }
-
-    .site-footer p {
-        margin: 0; /* pタグのデフォルトマージンをリセット */
-    }
-
+<style>
 	/* --- コンテンツ本文表示のための基本レイアウト設定 --- */
-	.content-area { 
+	.content-area {
 		/* レイアウト責務の定義 */
-		max-width: var(--container-max-width);; /* ページ全体の横幅制御 */
+		max-width: var(--container-max-width); /* ページ全体の横幅制御 */
 		margin: 0 auto; /* センタリング指定 */
 		padding: 1rem var(--side-padding) 2rem; /* 左右余白を変数にし、スマホでも確保 */
 		width: 100%; /* 横幅が100%を超えないように強制 */
-        /* box-sizing: border-box; */
 	}
 
-	/* narrow=true（404ページなど）の時の「器」の制御 */
-    .content-area.is-narrow {
-        max-width: 700px; /* ここは「あえて狭くしたい」ページ用なので固定値、あるいは 700px 等で維持 */
-        padding-top: 4rem;
-    }
+	/* isFullHeight=true の時、画面中央に配置*/
+	.content-area.is-full-height {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		padding: 2rem; /* paddingの重複定義を避け、ここで完結させる */
+	}
 
-	/* スマホ表示（幅768px以下）での調整 */
-    @media (max-width: 768px) {
-        :root {
-            --side-padding: 1rem; /* スマホでは余白を少し狭くして本文幅を確保 */
-        }
-        .header-container {
-            /* ロゴとメニューを縦に並べたい、もしくは文字を小さくしたい場合はここで調整します */
-            /* 現状はシンプルなので維持でもOK */
-        }
-
+	/* narrow=true の時の「器」の制御 */
+	.content-area.is-narrow {
+		max-width: 700px;
+		padding-top: 4rem; /* 404で必要だった余白をレイアウト側で定義 */
+	}
 </style>

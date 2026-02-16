@@ -1,0 +1,36 @@
+---
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<footer class="site-footer">
+    <a href={`${baseUrl}/policy/`} class="footer-link">サイトポリシー</a>
+    <p>&copy; Cozy Spark</p>
+</footer>
+
+<style>
+    /* フッターのスタイル */
+    .site-footer {
+        text-align: center;
+        padding: 2rem 0 2rem;
+        font-size: 0.8rem;
+        color: var(--accent-color);
+    }
+
+    /* フッター内のリンクとコピーライトを中央揃えで配置 */
+    /* Note: .footer-links クラスはHTMLで使用されていませんでしたが、念のため残すか、整理対象とします。
+       今回はHTML構造に合わせて必要なスタイルのみ記述します。 */
+
+    .footer-link {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+
+    .footer-link:hover {
+        text-decoration: underline;
+    }
+
+    .site-footer p {
+        margin: 0; /* pタグのデフォルトマージンをリセット */
+    }
+</style>
