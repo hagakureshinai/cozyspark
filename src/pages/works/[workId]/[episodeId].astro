@@ -1,40 +1,50 @@
 ---
 // src/pages/works/[workId]/[episodeId].astro
-import { getCollection, render } from 'astro:content';
-import Layout from '../../../layouts/Layout.astro';
+import { getCollection, render } from "astro:content";
+import Layout from "../../../layouts/Layout.astro";
+import NovelViewer from "../../../components/NovelViewer.astro";
 
 export async function getStaticPaths() {
-  const allEpisodes = await getCollection('episodes');
-  const allWorks = await getCollection('works');
+  const allEpisodes = await getCollection("episodes");
+  const allWorks = await getCollection("works");
 
   // IDから拡張子を除いたファイル名を取得する安全な関数
   const getSlug = (id: string) => {
-    return id.split('/').pop()?.replace(/\.[^/.]+$/, "") || id;
+    return (
+      id
+        .split("/")
+        .pop()
+        ?.replace(/\.[^/.]+$/, "") || id
+    );
   };
 
   return allEpisodes.map((episode) => {
     const workId = episode.data.workId;
     const episodeId = getSlug(episode.id);
-    
+
     const workEpisodes = allEpisodes
       .filter((e) => e.data.workId === workId)
       .sort((a, b) => a.data.order - b.data.order);
 
     const currentIndex = workEpisodes.findIndex((e) => e.id === episode.id);
-    
-    const prevEpisode = currentIndex > 0 ? workEpisodes[currentIndex - 1] : null;
-    const nextEpisode = currentIndex < workEpisodes.length - 1 ? workEpisodes[currentIndex + 1] : null;
+
+    const prevEpisode =
+      currentIndex > 0 ? workEpisodes[currentIndex - 1] : null;
+    const nextEpisode =
+      currentIndex < workEpisodes.length - 1
+        ? workEpisodes[currentIndex + 1]
+        : null;
 
     const work = allWorks.find((w) => getSlug(w.id) === workId);
 
     return {
-      params: { 
-        workId: workId, 
-        episodeId: episodeId 
+      params: {
+        workId: workId,
+        episodeId: episodeId,
       },
-      props: { 
-        episode, 
-        work, 
+      props: {
+        episode,
+        work,
         prevId: prevEpisode ? getSlug(prevEpisode.id) : null,
         nextId: nextEpisode ? getSlug(nextEpisode.id) : null,
       },
@@ -46,196 +56,33 @@ const { episode, work, prevId, nextId } = Astro.props;
 const { Content } = await render(episode);
 
 // ★ SEO用の設定
-// タイトル： 「話のタイトル（作品名）」 
 const pageTitle = `${episode.data.title}（${work?.data.title}）`;
-
-// 説明文： mdファイルのfrontmatterに 'description' があればそれを使い、
-// なければ作品全体のあらすじやデフォルト文を使う
-const pageDescription = episode.data.description || `${work?.data.title} 第${episode.data.order}話：${episode.data.title}のページです。`;
+const pageDescription =
+  episode.data.description ||
+  `${work?.data.title} 第${episode.data.order}話：${episode.data.title}のページです。`;
 
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+const workBasePath = `${baseUrl}/works/${episode.data.workId}`;
 ---
 
-<Layout 
-  title={pageTitle} 
-  description={pageDescription}
-  narrow={true}
->
-
-  <article>
-    <header class="novel-header">
-      <p class="work-title">
-        <a href={`${baseUrl}/works/${episode.data.workId}/`}>{work?.data.title}</a>
-      </p>
-      <h1 class="episode-title">{episode.data.title}</h1>
-    </header>
-
-    <div class="novel-content">
-      <Content />
-        {/* 次の話（nextId）がない場合のみ Fin. を表示 */}
-        {!nextId && <p class="fin">Fin.</p>}
-    </div>
-
-    <nav class="episode-navigation">
-      <div class="nav-links">
-        {prevId ? (
-          <a href={`${baseUrl}/works/${episode.data.workId}/${prevId}/`} class="prev">
-            &laquo; 前の話へ
-          </a>
-        ) : (
-          <span class="disabled"></span>
-        )}
-        
-        <a href={`${baseUrl}/works/${episode.data.workId}/`} class="index">目次へ</a>
-
-        {nextId ? (
-          <a href={`${baseUrl}/works/${episode.data.workId}/${nextId}/`} class="next">
-            次の話へ &raquo;
-          </a>
-        ) : (
-          <span class="disabled"></span>
-        )}
-      </div>
-    </nav>
-  </article>
+<Layout title={pageTitle} description={pageDescription} narrow={true}>
+  <NovelViewer
+    title={episode.data.title}
+    workTitle={work?.data.title || ""}
+    workLink={`${workBasePath}/`}
+    prevLink={prevId ? `${workBasePath}/${prevId}/` : undefined}
+    nextLink={nextId ? `${workBasePath}/${nextId}/` : undefined}
+    indexLink={`${workBasePath}/`}
+  >
+    <Content />
+  </NovelViewer>
 </Layout>
 
 <style>
-  .work-title {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-  }
-  .work-title a {
-    color: #888;
-    text-decoration: none;
-  }
-  .episode-title {
-    font-size: 1.5rem;
-    margin-top: 0;
-    margin-bottom: 3rem;
-    font-weight: normal;
-  }
-  
-  .novel-content {
-    line-height: 2;
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    white-space: pre-wrap; 
-  }
+  /* NovelViewerを使うので、ページ固有のスタイルは不要 */
 
-  /* ★修正： :global を使い、Markdownの中の p タグを強制的に指定する */
-  .novel-content :global(p) {
-    margin-top: 0;
-    margin-bottom: 2.0em; /* 段落の間隔 */
-    
-    /* ★重要：text-indentは「段落の最初の1行」にしか効きません。
-       1行目：手入力スペースが消えているので、CSSの 1em で字下げする。
-       2行目以降：手入力スペースが残っている。CSSの indent は効かない。
-       結果として、すべての行が「1文字分」で揃います。 */
-    text-indent: 1em;
-  }
-
-  /* Layout.astroから移動した組版ルール */
-  .novel-content h2 + p,
-  .novel-content h3 + p {
-    text-indent: 0;
-  }
-
+  /* Layout側でfooterのpaddingが必要なので global で当てておく */
   :global(.site-footer) {
-    /* 固定ナビ（前へ/次へ）の高さ分＋α、フッターの「内側」に下余白を作る */
-    /* これにより、フッターの文字が固定ナビの上に押し上げられます */
     padding-bottom: 6rem !important;
   }
-
-  /* ★修正：エピソードナビゲーションを全デバイスで固定 */
-  .episode-navigation {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 0.8rem 0; /* 上下余白を少しスリムに */
-    background: rgba(253, 253, 253, 0.85);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    border-top: 1px solid #eee;
-    z-index: 100;
-  }
-
-  .nav-links {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 画面を強制的に「1 : 1 : 1」の3等分に固定する */
-    align-items: center;
-    max-width: var(--container-max-width); /* PCでもコンテンツ幅に合わせて中央に寄せる */
-    margin: 0 auto;
-    padding: 0 var(--side-padding);
-    box-sizing: border-box;
-  }
-
-  /* 3つの要素（aタグとspanタグ）すべてを均等な幅にする */
-  .nav-links > * {
-    display: block;
-  }
-
-  /* それぞれのテキストの位置を固定する */
-  .nav-links .prev,
-  .nav-links .disabled:first-child {
-    text-align: left;
-  }
-
-  .nav-links .index {
-    text-align: center;
-  }
-
-  .nav-links .next,
-  .nav-links .disabled:last-child {
-    text-align: right;
-  }
-
-  .nav-links a {
-    text-decoration: none;
-    color: var(--text-color);
-    font-size: 0.9rem;
-    padding: 0.5rem 0; /* 左右のpaddingはflex:1に任せるので0にする */
-    transition: opacity 0.2s;
-  }
-  
-  .nav-links a:hover {
-    opacity: 0.6;
-  }
-
-  /* ★修正：本文がナビに隠れないよう、記事末尾に余白を確保（全デバイス共通） */
-  /* article {
-    padding-bottom: 0rem;
-  } */
-
-  /* スマホ用の微調整（文字サイズなど） */
-  @media (max-width: 768px) {
-    .nav-links a {
-      font-size: 0.8rem;
-      padding: 0.4rem 0.6rem;
-    }
-  }
-
-  .novel-content .fin {
-  text-align: center;
-  margin: 5rem 0;
-  font-size: 1.2rem;
-  color: var(--text-color);
-  
-  /* 1. 優先順位を上げて字下げを確実にリセット */
-  text-indent: 0 !important;
-
-  /* 2. 文字間隔の微調整 */
-  letter-spacing: 0.2rem;
-  
-  /* 
-     ★重要★
-     letter-spacing は「文字の右側」に余白を作ります。
-     そのため「Fin.」の最後の「.」の右側にも 0.2rem の余白ができてしまい、
-     その分だけ全体が「左」に押され、結果として右にずれて見えます。
-     同じ分だけ左側に padding を入れることで、左右を等しくします。
-  */
-  padding-left: 0.2rem;
-  }
-
 </style>

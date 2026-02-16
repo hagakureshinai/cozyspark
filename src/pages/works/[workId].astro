@@ -1,42 +1,42 @@
 ---
 // src/pages/works/[workId].astro
-import { getCollection, render } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import NovelViewer from "../../components/NovelViewer.astro";
 
 export async function getStaticPaths() {
-  const allWorks = await getCollection('works');
-  const allEpisodes = await getCollection('episodes');
+  const allWorks = await getCollection("works");
+  const allEpisodes = await getCollection("episodes");
 
   // IDから拡張子を除くヘルパー関数
-  const cleanId = (id: string) => id.split('/').pop()?.replace(/\.[^/.]+$/, "") || id;
+  const cleanId = (id: string) =>
+    id
+      .split("/")
+      .pop()
+      ?.replace(/\.[^/.]+$/, "") || id;
 
   return allWorks.map((work) => {
     const workSlug = cleanId(work.id);
 
-    // 作品内のエピソードを抽出（FrontmatterのworkIdと、作品データのファイル名を比較）
+    // 作品内のエピソードを抽出
     const workEpisodes = allEpisodes
       .filter((episode) => {
-        // エピソード側が持つ workId と、作品側のファイル名(slug)が一致するか確認
         return episode.data.workId === workSlug;
       })
       .sort((a, b) => a.data.order - b.data.order);
 
     return {
-      params: { workId: workSlug }, // 拡張子なしのIDをURLにする
-      // 【firstEpisode を追加】
-      props: { 
-        work, 
+      params: { workId: workSlug },
+      props: {
+        work,
         episodes: workEpisodes,
-        firstEpisode: workEpisodes.length > 0 ? workEpisodes[0] : null
+        firstEpisode: workEpisodes.length > 0 ? workEpisodes[0] : null,
       },
     };
   });
 }
 
-// 【firstEpisode を受け取る】
 const { work, episodes, firstEpisode } = Astro.props;
-
-// 【isShort フラグを見る】
 const isShortStory = work.data.isShort;
 
 let Content = null;
@@ -46,133 +46,177 @@ if (isShortStory && firstEpisode) {
 }
 
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-
-// エピソード用にも同じ関数を用意
-const cleanId = (id: string) => id.split('/').pop()?.replace(/\.[^/.]+$/, "") || id;
+const cleanId = (id: string) =>
+  id
+    .split("/")
+    .pop()
+    ?.replace(/\.[^/.]+$/, "") || id;
 
 // 最新エピソードのIDを取得
 let latestEpisodeId: string | null = null;
 if (episodes.length > 0) {
-    // episodesは既にorder順にソートされているため、最後の要素が最新
-    latestEpisodeId = cleanId(episodes[episodes.length - 1].id);
+  latestEpisodeId = cleanId(episodes[episodes.length - 1].id);
 }
 
-// work-headerからUPバッジを削除するため、work.data.isUpdatedを無効化
-// work.data.isUpdatedがtrueかどうかを取得し、下のテンプレートで使用する
 const shouldShowWorkUpdateBadge = work.data.isUpdated;
 
-// ★ SEO用の設定
-// タイトル： 「作品名（目次・作品詳細）」
-// 【タイトルを短編かシリーズかで微調整】
-const pageTitle = isShortStory 
-  ? work.data.title 
+// SEO設定
+const pageTitle = isShortStory
+  ? work.data.title
   : `${work.data.title} 作品詳細・目次`;
 
-// 説明文： 作品のあらすじがあればそれを使用し、なければデフォルト文を生成
-// 100文字程度に収まるようにする
-const pageDescription = work.data.description 
-  ? work.data.description.substring(0, 120) 
+const pageDescription = work.data.description
+  ? work.data.description.substring(0, 120)
   : `${work.data.title}の作品情報とエピソード一覧のページです。`;
 
-// カテゴリ名の変換マップ
 const categoryNames = {
-  'series': '観測者シリーズ',
-  'single': '単発作品',
-  'ss': '掌編小説'
+  series: "観測者シリーズ",
+  single: "単発作品",
+  ss: "掌編小説",
 };
+
+const workBasePath = `${baseUrl}/works/${cleanId(work.id)}`;
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
-  <div class="work-detail-content">
-    <header class="work-header">
-      <h1 class="work-title">{work.data.title}</h1>
+{
+  /* 
+    短編の場合 (isShortStory): 
+      ヘッダーは幅広(1000px)で表示したいので Layout narrow={false}
+      本文(NovelViewer)だけ個別に幅制御する
+    シリーズの場合: 
+      目次なので Layout narrow={false}
+*/
+}
+<Layout title={pageTitle} description={pageDescription} narrow={false}>
+  {
+    isShortStory && Content ? (
+      /* --- 短編・掌編の場合 --- */
+      <div class="work-detail-content">
+        <header class="work-header">
+          <h1 class="work-title-large">{work.data.title}</h1>
 
-      {/* ★作品一覧と同じ「あらすじ」を追加 */}
-      {work.data.description && (
-        <p class="work-description">{work.data.description}</p>
-      )}
+          {work.data.description && (
+            <p class="work-description">{work.data.description}</p>
+          )}
 
-      <div class="work-meta">
-        <span class="category">{categoryNames[work.data.category]}</span>
-        {/* ★一覧ページと合わせたバッジ形式に変更 */}
-        {work.data.status === 'ongoing' ? (
-          <span class="badge-ongoing">連載中</span>
-        ) : (
-          <span class="badge-completed">完結済</span>
-        )}
+          <div class="work-meta">
+            <span class="category">{categoryNames[work.data.category]}</span>
+            <span class="badge-completed">完結済</span>
+            {work.data.lastUpdated && (
+              <time class="work-date">
+                最終更新：
+                {work.data.lastUpdated
+                  .toLocaleDateString("ja-JP", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })
+                  .replace(/\//g, ".")}
+              </time>
+            )}
+          </div>
+        </header>
 
-        {/* ★最終更新日も表示 */}
-        {work.data.lastUpdated && (
-          <time class="work-date">
-            最終更新：{work.data.lastUpdated.toLocaleDateString('ja-JP', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit'
-            }).replace(/\//g, '.')}
-          </time>
-        )}
-      </div>
-    </header>
-
-    {isShortStory && Content ? (
-      /* --- 短編・掌編の場合：本文を直接表示 --- */
-      <article class="story-body">
-        <div class="novel-content">
-          <Content />
-          {/* 【↓ここが追加点：Fin.を表示】 */}
-          <p class="fin">Fin.</p>
+        {/* 本文部分だけを幅700pxに制限して中央揃えにする */}
+        <div class="short-story-wrapper">
+          <NovelViewer
+            title={firstEpisode!.data.title}
+            workTitle=""
+            workLink="#"
+            indexLink={`${baseUrl}/works/`}
+            isShortStory={true}
+          >
+            <Content />
+          </NovelViewer>
         </div>
-      </article>
+      </div>
     ) : (
-      /* --- シリーズ作品の場合：従来の目次を表示 --- */
-      <section class="episode-list-section">
-        <h2 class="section-title">目次</h2>
-        <ul class="episode-list">
-          {episodes.map((episode) => {
-            const episodeId = cleanId(episode.id);
-            const isLatestAndUpdated = shouldShowWorkUpdateBadge && episodeId === latestEpisodeId;
+      /* --- シリーズ作品（目次）の場合 --- */
+      <div class="work-detail-content">
+        <header class="work-header">
+          <h1 class="work-title-large">{work.data.title}</h1>
 
-            return (
-              <li>
-                <a href={`${baseUrl}/works/${cleanId(work.id)}/${episodeId}/`}>
-                  <div class="episode-info-container">
-                    {/* 左側：タイトルとUPバッジ */}
-                    <div class="episode-main">
-                      <span class="title">{episode.data.title}</span>
-                      {isLatestAndUpdated && <span class="badge-updated">UP</span>}
-                    </div>
-                    
-                    {/* 右側（スマホでは下）：文字数とあらすじ */}
-                    {(episode.data.wordCount || episode.data.description) && (
-                      <div class="episode-details">
-                        {episode.data.wordCount && (
-                          <span class="word-count">{episode.data.wordCount}</span>
-                        )}
-                        {episode.data.description && (
-                          <span class="episode-description">{episode.data.description}</span>
+          {work.data.description && (
+            <p class="work-description">{work.data.description}</p>
+          )}
+
+          <div class="work-meta">
+            <span class="category">{categoryNames[work.data.category]}</span>
+            {work.data.status === "ongoing" ? (
+              <span class="badge-ongoing">連載中</span>
+            ) : (
+              <span class="badge-completed">完結済</span>
+            )}
+
+            {work.data.lastUpdated && (
+              <time class="work-date">
+                最終更新：
+                {work.data.lastUpdated
+                  .toLocaleDateString("ja-JP", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })
+                  .replace(/\//g, ".")}
+              </time>
+            )}
+          </div>
+        </header>
+
+        <section class="episode-list-section">
+          <h2 class="section-title">目次</h2>
+          <ul class="episode-list">
+            {episodes.map((episode) => {
+              const episodeId = cleanId(episode.id);
+              const isLatestAndUpdated =
+                shouldShowWorkUpdateBadge && episodeId === latestEpisodeId;
+
+              return (
+                <li>
+                  <a href={`${workBasePath}/${episodeId}/`}>
+                    <div class="episode-info-container">
+                      <div class="episode-main">
+                        <span class="title">{episode.data.title}</span>
+                        {isLatestAndUpdated && (
+                          <span class="badge-updated">UP</span>
                         )}
                       </div>
-                    )}
-                  </div>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-        {episodes.length === 0 && <p>エピソードはまだありません。</p>}
-      </section>
-    )}
-  </div>
+
+                      {(episode.data.wordCount || episode.data.description) && (
+                        <div class="episode-details">
+                          {episode.data.wordCount && (
+                            <span class="word-count">
+                              {episode.data.wordCount}
+                            </span>
+                          )}
+                          {episode.data.description && (
+                            <span class="episode-description">
+                              {episode.data.description}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+          {episodes.length === 0 && <p>エピソードはまだありません。</p>}
+        </section>
+      </div>
+    )
+  }
 </Layout>
 
 <style>
-  /* --- 1. 作品ヘッダーエリア --- */
+  /* --- 作品ヘッダーエリア（共通） --- */
   .work-header {
     margin-bottom: 3rem;
     border-bottom: 1px solid #eee;
     padding-bottom: 2rem;
   }
-  .work-title {
+  .work-title-large {
     font-size: 2rem;
     font-weight: normal;
     margin-bottom: 1rem;
@@ -192,15 +236,22 @@ const categoryNames = {
   }
 
   /* 作品ステータスバッジ */
-  .badge-ongoing, .badge-completed {
+  .badge-ongoing,
+  .badge-completed {
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 0.75rem;
   }
-  .badge-ongoing { background: #4F8FA8; color: #fff; }
-  .badge-completed { background: #7FAF8F; color: #fff; }
+  .badge-ongoing {
+    background: #4f8fa8;
+    color: #fff;
+  }
+  .badge-completed {
+    background: #7faf8f;
+    color: #fff;
+  }
 
-  /* --- 2. 目次リストエリア --- */
+  /* --- 目次リストエリア --- */
   .section-title {
     font-size: 1.2rem;
     font-weight: normal;
@@ -215,7 +266,7 @@ const categoryNames = {
     border-bottom: 1px dashed #eee;
   }
   .episode-list a {
-    display: block; /* 領域全体をリンクに */
+    display: block;
     padding: 1rem 0;
     text-decoration: none;
   }
@@ -223,15 +274,13 @@ const categoryNames = {
     text-decoration: underline;
   }
 
-  /* タイトル・文字数・あらすじを包むコンテナ（PCでは横並び） */
   .episode-info-container {
     display: flex;
-    align-items: center; 
+    align-items: center;
     gap: 1.5rem;
     width: 100%;
   }
 
-  /* タイトル部分 */
   .episode-main {
     display: flex;
     align-items: center;
@@ -245,7 +294,6 @@ const categoryNames = {
     color: var(--link-color);
   }
 
-  /* 行頭のマーカー */
   .episode-main .title::before {
     content: "";
     display: inline-block;
@@ -257,7 +305,6 @@ const categoryNames = {
     opacity: 0.5;
   }
 
-  /* 文字数とあらすじのセット */
   .episode-details {
     display: flex;
     gap: 1rem;
@@ -273,31 +320,23 @@ const categoryNames = {
     line-height: 1.4;
   }
 
-  /* UPバッジ */
   .badge-updated {
     font-size: 0.7rem;
     font-weight: bold;
     color: #fff;
-    background-color: #D4A017;
+    background-color: #d4a017;
     padding: 1px 6px;
     border-radius: 2px;
     margin-left: 0.8rem;
   }
 
-  .back-to-top {
-    margin-top: 5rem;
-    text-align: center;
-  }
-
-  /* --- 3. スマホ表示調整 (768px以下) --- */
+  /* --- スマホ表示調整 (768px以下) --- */
   @media (max-width: 768px) {
-    /* ヘッダーの日付を改行 */
     .work-date {
       flex-basis: 100%;
       margin-top: 0.2rem;
     }
 
-    /* 目次を縦並びに（タイトル / 文字数 / あらすじ の3段） */
     .episode-info-container {
       flex-direction: column;
       align-items: flex-start;
@@ -306,34 +345,20 @@ const categoryNames = {
     .episode-details {
       flex-direction: column;
       gap: 0.2rem;
-      padding-left: 1.4rem; /* マーカーの分だけ字下げ */
+      padding-left: 1.4rem;
     }
   }
 
-/* 【本文用のスタイルを追加】 */
-  .story-body {
-    line-height: 2;
-    font-size: 1.1rem;
-    letter-spacing: 0.05em;
-    /* 小説らしい縦の余白 */
-    margin-top: 3rem;
-    /* 改行を反映させる設定（Markdownの仕様に合わせて調整） */
-    white-space: pre-wrap; 
+  /* 短編表示時のフッター調整用 */
+  /* NovelViewerを使っている場合、Layout側でpaddingが必要 */
+  :global(.site-footer) {
+    padding-bottom: 6rem !important;
   }
 
-  /* ルビの調整 */
-  .story-body :global(ruby) {
-    ruby-align: center;
+  /* 本文エリアの幅制限 */
+  .short-story-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    padding-top: 2rem;
   }
-  .story-body :global(rt) {
-    font-size: 0.6em;
-  }
-
-    /* 【↓ここが変更・追加点：Fin.とナビゲーションのスタイル】 */
-  .fin {
-  text-align: center;
-  margin: 5rem 0;
-  font-size: 1.2rem;
-  color: var(--text-color);
-
 </style>
