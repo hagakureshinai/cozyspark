@@ -3,30 +3,27 @@
 ## プロジェクト概要
 - **プロジェクト名**: Cozy Spark
 - **ゴール**: Astroで作成したサイトのコード整理（リファクタリング）を行い、保守性を向上させる。
-- **現在のフェーズ**: コンテンツ管理 (`src/content/config.ts`) のリファクタリング
+- **現在のフェーズ**: 残りのページ (`works/index.astro` 等) のリファクタリング検討
 
 ## 技術スタック
 - **フレームワーク**: Astro 5.0+
 - **スタイリング**: Component-Oriented Scoped CSS + `global.css`
-- **データ管理**: Astro Content Collections (Zod Schema)
+- **データ管理**: Astro Content Collections (`src/content/schemas/`)
 
 ## 要件定義
-- `src/content/config.ts` が肥大化しつつあり、可読性が低下している。
-- **課題**: 
-    - 作品 (`works`) とエピソード (`episodes`) の定義が1つのファイルに混在している。
-    - `zod` スキーマの定義が長くなり、何が必須で何がオプションかがパッと見で分かりにくい。
-    - 将来フィールドが増えたときにさらに見通しが悪くなる。
+- **課題**: `src/pages/works/index.astro`（作品一覧ページ）のコードが450行を超えており、保守性が低い。
+    - 同じような「作品カード」のHTML/CSSが、ピックアップ・シリーズ・単発・掌編の4回繰り返されている。
+    - デザイン変更時に4箇所直す必要があり、バグの温床になる。
 
 ### 提案する戦略
-1. **スキーマ定義の分離**
-   - `src/content/schemas/works.ts` と `src/content/schemas/episodes.ts` に分割する。
-2. **型定義の明示**
-   - TypeScriptの型推論に頼るだけでなく、`infer` を使って型をエクスポートし、他のコンポーネントで使い回せるようにする。
-   - 例: `type Work = z.infer<typeof workSchema>;`
+1.  **作品カードのコンポーネント化 (`WorkCard.astro`)**
+    - 作品一覧で使われている「枠線、タイトル、バッジ、あらすじ」のセットを共通部品にする。
+    - これにより `works/index.astro` の記述量を大幅に減らし、デザイン統一を保証する。
+2.  **その他のページ (`404`, `index`, `policy`)**
+    - 現状シンプルなどで、大きなリファクタリングは不要。
+    - ただし、共通の `global.css` 変数を使うように微調整しても良い。
 
 ## MVPスコープ（リファクタリング計画）
-- **フェーズ 5: コンテンツ管理の整理**
-  - [ ] `src/content/schemas/` ディレクトリの作成。
-  - [ ] `works` スキーマの分離。
-  - [ ] `episodes` スキーマの分離。
-  - [ ] `config.ts` をシンプルにする。
+- **フェーズ 6: 作品一覧の整理**
+  - [ ] `src/components/WorkCard.astro` の作成。
+  - [ ] `src/pages/works/index.astro` のリファクタリング（WorkCardへの置き換え）。

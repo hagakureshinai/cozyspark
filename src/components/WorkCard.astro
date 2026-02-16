@@ -1,0 +1,265 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+    work: CollectionEntry<"works">; // Pick<CollectionEntry<'works'>, 'id' | 'data'> & { pickupLabel?: string };
+    pickupLabel?: string;
+    showStatusBadge?: boolean; // 連載中/完結済バッジを表示するかどうか（SSなどでは不要な場合があるため）
+}
+
+const { work, pickupLabel, showStatusBadge = true } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+// IDから拡張子を削除するヘルパー
+const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
+
+// 日付フォーマット
+const formatDate = (date: Date) => {
+    return date
+        .toLocaleDateString("ja-JP", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        })
+        .replace(/\//g, ".");
+};
+---
+
+<li class={`work-item ${pickupLabel ? "pickup-item" : ""}`}>
+    <div class="work-main">
+        {/* ピックアップ用のラベル */}
+        {pickupLabel && <div class="pickup-label">{pickupLabel}</div>}
+
+        <div class="work-header">
+            {/* パターン①：工事中 */}
+            {
+                work.data.isDraft ? (
+                    <span class="work-title is-draft">{work.data.title}</span>
+                ) : work.data.externalLink ? (
+                    /* パターン②：外部リンク */
+                    <a
+                        href={work.data.externalLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <span class="work-title">{work.data.title}</span>
+                        <span class="icon-external">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                                <polyline points="15 3 21 3 21 9" />
+                                <line x1="10" y1="14" x2="21" y1="3" />
+                            </svg>
+                        </span>
+                    </a>
+                ) : (
+                    /* パターン③：通常リンク */
+                    <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
+                        <span class="work-title">{work.data.title}</span>
+                    </a>
+                )
+            }
+
+            <div class="work-badges">
+                {work.data.isR18 && <span class="badge-r18">R18</span>}
+
+                {
+                    showStatusBadge &&
+                        (work.data.status === "ongoing" ? (
+                            <span class="badge-ongoing">連載中</span>
+                        ) : work.data.status === "completed" ? (
+                            <span class="badge-completed">完結済</span>
+                        ) : null)
+                }
+
+                {work.data.isUpdated && <span class="badge-updated">UP</span>}
+            </div>
+
+            <div class="work-meta">
+                {
+                    work.data.wordCount && (
+                        <span class="work-word-count">
+                            {work.data.wordCount}
+                        </span>
+                    )
+                }
+
+                {/* 日付をここに表示する場合（シリーズ一覧など） */}
+                {
+                    !pickupLabel && work.data.lastUpdated && (
+                        <time class="work-date">
+                            {formatDate(work.data.lastUpdated)}
+                        </time>
+                    )
+                }
+            </div>
+        </div>
+
+        {
+            work.data.description && (
+                <p class="work-description">{work.data.description}</p>
+            )
+        }
+    </div>
+
+    {
+        /* ピックアップ時は日付を表示しないデザインだったが、
+      SS一覧ではカードの下（work-mainの外）に日付があったりデザインゆらぎがある。
+      一旦、WorkCard内では「work-mainの中にmetaとして入れる」スタイル（シリーズ一覧のスタイル）に統一するか、
+      あるいはPropsで制御するか。
+      
+      既存実装との差異：
+      - Pickup: 日付表示なし
+      - Series: work-headerの中に日付あり
+      - Single: work-headerの中に日付あり（DOM構造はSeriesと同じ）
+      - SS: work-mainの外（liの直下）に日付あり
+      
+      この差異を吸収するには「統一」してしまうのが一番キレイ。
+      すべて「work-headerの中（タイトルの横/下）」に統一する提案をする。
+      (WorkCard実装では↑の work-meta に統一済み)
+  */
+    }
+</li>
+
+<style>
+    .work-item {
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        padding-bottom: 1rem;
+    }
+
+    .work-item.pickup-item {
+        margin-bottom: 2rem;
+    }
+
+    .work-main {
+        flex: 1;
+    }
+
+    .pickup-label {
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.2rem;
+    }
+
+    .work-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.3rem;
+        flex-wrap: wrap;
+    }
+
+    .work-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .work-title.is-draft {
+        color: #bbb;
+        cursor: default;
+    }
+
+    a {
+        text-decoration: none;
+        color: var(--text-color);
+    }
+
+    a:hover .work-title {
+        color: var(--accent-color);
+    }
+
+    /* 外部リンクアイコン */
+    .icon-external {
+        margin-left: 0.4rem;
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .work-description {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .work-badges {
+        display: flex;
+        gap: 0.4rem;
+    }
+
+    .badge-ongoing {
+        font-size: 0.7rem;
+        color: #fff;
+        border: 1px solid #ccc;
+        padding: 1px 6px;
+        border-radius: 2px;
+        background-color: #4f8fa8;
+    }
+
+    .badge-completed {
+        font-size: 0.7rem;
+        color: #fff;
+        padding: 1px 6px;
+        border-radius: 2px;
+        background-color: #7faf8f;
+    }
+
+    .badge-updated {
+        font-size: 0.7rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #d4a017;
+        padding: 1px 6px;
+        border-radius: 2px;
+        line-height: 1.5;
+    }
+
+    .badge-r18 {
+        font-size: 0.7rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #d32f2f;
+        padding: 1px 6px;
+        border-radius: 2px;
+    }
+
+    .work-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-left: 0;
+    }
+
+    .work-word-count {
+        font-size: 0.8rem;
+        color: #888;
+        font-family: sans-serif;
+    }
+
+    .work-date {
+        font-size: 0.8rem;
+        color: var(--accent-color);
+        font-family: sans-serif;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+        .work-meta {
+            width: 100%;
+            margin-top: 0.2rem;
+        }
+    }
+</style>

@@ -1,5 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Cozy Spark" showNavigation={false}>
@@ -49,19 +49,19 @@ import Layout from '../layouts/Layout.astro';
   .disclaimer {
     font-size: 0.85rem;
     line-height: 2;
-    color: #666;
+    color: var(--sub-text-color);
     margin-bottom: 4rem;
   }
 
   .r18-note {
     margin-top: 1rem;
-    color: #A03A3A;
+    color: var(--warning-color);
   }
 
   .enter-button {
     display: inline-block;
     padding: 1rem 4rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     text-decoration: none;
     color: var(--text-color);
     letter-spacing: 0.2em;

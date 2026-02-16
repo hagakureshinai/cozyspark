@@ -1,14 +1,19 @@
 ---
 // src/pages/works/index.astro
-import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import WorkCard from "../../components/WorkCard.astro";
 
-const allWorks = await getCollection('works');
+const allWorks = await getCollection("works");
 const sortedWorks = allWorks.sort((a, b) => a.data.order - b.data.order);
 
-const seriesWorks = sortedWorks.filter(work => work.data.category === 'series');
-const singleWorks = sortedWorks.filter(work => work.data.category === 'single');
-const ssWorks = sortedWorks.filter(work => work.data.category === 'ss');
+const seriesWorks = sortedWorks.filter(
+  (work) => work.data.category === "series",
+);
+const singleWorks = sortedWorks.filter(
+  (work) => work.data.category === "single",
+);
+const ssWorks = sortedWorks.filter((work) => work.data.category === "ss");
 
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -19,16 +24,16 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
 // 「初めての方はこちら」に表示したい作品の [ID]（ファイル名）と [見出し] を設定します。
 // 例: src/content/works/observer_love.md なら 'observer_love' と書く
 const pickupConfig = [
-  { id: 'observer_cake', label: '＊年下攻×クール受 観測者シリーズ試し読み' },
-  { id: 'beyond_border', label: '＊おじさま×おじさま' },
-  { id: 'beyond_control', label: '＊えちえち' }
+  { id: "observer_cake", label: "＊年下攻×クール受 観測者シリーズ試し読み" },
+  { id: "beyond_border", label: "＊おじさま×おじさま" },
+  { id: "beyond_control", label: "＊えちえち" },
 ];
 // ★★★ 【編集エリア】ここまで ★★★
 
 // 設定に基づき、作品データと見出しをセットにする
 const pickupWorks = pickupConfig
-  .map(config => {
-    const work = allWorks.find(w => getSlug(w.id) === config.id);
+  .map((config) => {
+    const work = allWorks.find((w) => getSlug(w.id) === config.id);
     if (!work) return null;
     return { ...work, pickupLabel: config.label }; // 作品データに見出しを合体させる
   })
@@ -40,227 +45,82 @@ const pickupWorks = pickupConfig
     <h1>作品一覧</h1>
   </header>
 
-  {/* --- 【修正版】ピックアップ（初めての方はこちら）セクション --- */}
-{pickupWorks.length > 0 && (
-  <section class="work-category pickup-section">
-    <h2>初めての方へ｜おすすめ作品</h2>
-    
-    <ul class="work-list">
-      {pickupWorks.map(work => (
-        <li class="work-item pickup-item">
-          <div class="work-main">
-              {/* オススメ理由の見出し */}
-              <div class="pickup-label">{work.pickupLabel}</div>
-              
-              <div class="work-header">
-                {/* タイトルリンク：外部リンクか自サイトリンクかの2択 */}
-                {work.data.externalLink ? (
-                  <a href={work.data.externalLink} target="_blank" rel="noopener noreferrer">
-                    <span class="work-title">{work.data.title}</span>
-                    <span class="icon-external">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y1="3"></line>
-                      </svg>
-                    </span>
-                  </a>
-                ) : (
-                  <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
-                    <span class="work-title">{work.data.title}</span>
-                  </a>
-                )}
+  {/* --- ピックアップ（初めての方はこちら）セクション --- */}
+  {
+    pickupWorks.length > 0 && (
+      <section class="work-category pickup-section">
+        <h2>初めての方へ｜おすすめ作品</h2>
 
-                {/* ピックアップ用：R18バッジのみを表示 */}
-                <div class="work-badges">
-                  {work.data.isR18 && <span class="badge-r18">R18</span>}
-                </div>
+        <ul class="work-list">
+          {pickupWorks.map((work) => (
+            <WorkCard work={work} pickupLabel={work.pickupLabel as string} />
+          ))}
+        </ul>
+      </section>
+    )
+  }
 
-                {/* ピックアップ用：文字数のみを表示 */}
-                <div class="work-meta">
-                  {work.data.wordCount && <span class="work-word-count">{work.data.wordCount}</span>}
-                </div>
-              </div>
-              
-              {work.data.description && (
-                <p class="work-description">{work.data.description}</p>
-              )}
-          </div>
-        </li>
-      ))}
-    </ul>
-  </section>
-)}
+  {
+    seriesWorks.length > 0 && (
+      <section class="work-category">
+        <div class="category-header-group">
+          <h2>観測者シリーズ（長編・連作）</h2>
+          <p class="category-info">
+            大学生・秋吉悠也(20)×大学教員・藤堂圭(28)のシリーズ。
+          </p>
+        </div>
 
-  {seriesWorks.length > 0 && (
-    <section class="work-category">
-    <div class="category-header-group">
-      <h2>観測者シリーズ（長編・連作）</h2>
-      <p class="category-info">大学生・秋吉悠也(20)×大学教員・藤堂圭(28)のシリーズ。</p>
-    </div>
+        <ul class="work-list">
+          {seriesWorks.map((work) => (
+            <WorkCard work={work} />
+          ))}
+        </ul>
+      </section>
+    )
+  }
 
-      <ul class="work-list">
-        {seriesWorks.map(work => (
-          <li class="work-item">
-            <div class="work-main">
-              <div class="work-header">
-                {work.data.isDraft ? (
-                  /* パターン①：工事中の場合（リンクなし・少し薄くするクラスを追加） */
-                  <span class="work-title is-draft">{work.data.title}</span>
-                ) : work.data.externalLink ? (
-                  /* パターン②：外部リンクがある場合（Pixivなど・別タブで開く） */
-                  <a href={work.data.externalLink} target="_blank" rel="noopener noreferrer">
-                    <span class="work-title">{work.data.title}</span>
-                    <span class="icon-external"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y1="3"></line></svg></span>
-                  </a>
-                ) : (
-                  /* パターン③：通常の場合（自サイトのmdファイルへ） */
-                  <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
-                    <span class="work-title">{work.data.title}</span>
-                  </a>
-                )}
-                <div class="work-badges">
-                  {work.data.isR18 && <span class="badge-r18">R18</span>}
-                  {work.data.status === 'ongoing' ? (
-                    <span class="badge-ongoing">連載中</span>
-                  ) : (
-                    <span class="badge-completed">完結済</span>
-                  )}
-                  {work.data.isUpdated && <span class="badge-updated">UP</span>}
-                </div>
+  {
+    singleWorks.length > 0 && (
+      <section class="work-category">
+        <div class="category-header-group">
+          <h2>単発作品</h2>
+          <p class="category-info">
+            観測者シリーズ以外の、単独で読める作品をまとめています。すべて完結済みです。
+          </p>
+        </div>
 
-                  <div class="work-meta">
-                    {/* ★追加：文字数（wordCountがある時だけ表示） */}
-                    {work.data.wordCount && <span class="work-word-count">{work.data.wordCount}</span>}
+        <ul class="work-list">
+          {singleWorks.map((work) => (
+            <WorkCard work={work} />
+          ))}
+        </ul>
+      </section>
+    )
+  }
 
-                    {work.data.lastUpdated && (
-                      <time class="work-date">
-                        {work.data.lastUpdated.toLocaleDateString('ja-JP', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit'
-                        }).replace(/\//g, '.')}
-                      </time>
-                    )}
-                  </div>
-              </div>
-              
-              {work.data.description && (
-                <p class="work-description">{work.data.description}</p>
-              )}
-            </div>
+  {
+    ssWorks.length > 0 && (
+      <section class="work-category">
+        <div class="category-header-group">
+          <h2>掌編小説</h2>
+          <p class="category-info">
+            Xで投稿した150～1000字のSS。すべて完結済みです。
+          </p>
+        </div>
 
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
-
-  {singleWorks.length > 0 && (
-    <section class="work-category">
-      <div class="category-header-group">
-        <h2>単発作品</h2>
-        <p class="category-info">観測者シリーズ以外の、単独で読める作品をまとめています。すべて完結済みです。</p>
-      </div>
-
-      <ul class="work-list">
-        {singleWorks.map(work => (
-          <li class="work-item">
-            <div class="work-main">
-              <div class="work-header">
-                {work.data.isDraft ? (
-                  /* パターン①：工事中の場合（リンクなし・少し薄くするクラスを追加） */
-                  <span class="work-title is-draft">{work.data.title}</span>
-                ) : work.data.externalLink ? (
-                  /* パターン②：外部リンクがある場合（Pixivなど・別タブで開く） */
-                  <a href={work.data.externalLink} target="_blank" rel="noopener noreferrer">
-                    <span class="work-title">{work.data.title}</span>
-                    <span class="icon-external"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y1="3"></line></svg></span>
-                  </a>
-                ) : (
-                  /* パターン③：通常の場合（自サイトのmdファイルへ） */
-                  <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
-                    <span class="work-title">{work.data.title}</span>
-                  </a>
-                )}
-                <div class="work-badges">
-                  {work.data.isR18 && <span class="badge-r18">R18</span>}
-                  {work.data.status === 'ongoing' && <span class="badge-ongoing">連載中</span>}
-                  {work.data.isUpdated && <span class="badge-updated">UP</span>}
-                </div>
-                {work.data.lastUpdated && (
-                  <time class="work-date">
-                    {work.data.lastUpdated.toLocaleDateString('ja-JP', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit'
-                    }).replace(/\//g, '.')}
-                  </time>
-                )}
-              </div>
-              
-              {work.data.description && (
-                <p class="work-description">{work.data.description}</p>
-              )}
-            </div>
-
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
-
-  {ssWorks.length > 0 && (
-    <section class="work-category">
-    <div class="category-header-group">
-      <h2>掌編小説</h2>
-      <p class="category-info">Xで投稿した150～1000字のSS。すべて完結済みです。</p>
-    </div>
-
-      <ul class="work-list">
-        {ssWorks.map(work => (
-          <li class="work-item">
-            <div class="work-main">
-              <div class="work-header">
-                {work.data.isDraft ? (
-                  /* パターン①：工事中の場合（リンクなし・少し薄くするクラスを追加） */
-                  <span class="work-title is-draft">{work.data.title}</span>
-                ) : work.data.externalLink ? (
-                  /* パターン②：外部リンクがある場合（Pixivなど・別タブで開く） */
-                  <a href={work.data.externalLink} target="_blank" rel="noopener noreferrer">
-                    <span class="work-title">{work.data.title}</span>
-                    <span class="icon-external"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y1="3"></line></svg></span>
-                  </a>
-                ) : (
-                  /* パターン③：通常の場合（自サイトのmdファイルへ） */
-                  <a href={`${baseUrl}/works/${getSlug(work.id)}/`}>
-                    <span class="work-title">{work.data.title}</span>
-                  </a>
-                )}
-                <div class="work-badges">
-                  {work.data.isUpdated && <span class="badge-updated">UP</span>}
-                </div>
-              </div>
-              
-              {work.data.description && (
-                <p class="work-description">{work.data.description}</p>
-              )}
-            </div>
-
-            {work.data.lastUpdated && (
-              <time class="work-date">
-                {work.data.lastUpdated.toLocaleDateString('ja-JP', {
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit'
-                }).replace(/\//g, '.')}
-              </time>
-            )}        
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
+        <ul class="work-list">
+          {ssWorks.map((work) => (
+            /* SSはステータスバッジ（完結済など）は不要なら showStatusBadge={false} を渡すことも可。
+             とりあえず統一感のためデフォルト(true)で出す。
+             ※前の実装ではSSにはバッジ出してなかったが、WorkCard統一で出るようになる。
+             もし出したくない場合: showStatusBadge={false}
+          */
+            <WorkCard work={work} showStatusBadge={false} />
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </Layout>
 
 <style>
@@ -278,19 +138,8 @@ const pickupWorks = pickupConfig
 
   .pickup-section {
     padding: 1.5rem;
-    border: 1px solid #E7D1D5;
+    border: 1px solid #e7d1d5;
     border-radius: 8px;
-  }
-
-  .pickup-item {
-    margin-bottom: 2rem; /* 作品ごとの間隔を少し広げる */
-  }
-
-  .pickup-label {
-    font-size: 0.85rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 0.2rem;
   }
 
   .work-category {
@@ -309,145 +158,22 @@ const pickupWorks = pickupConfig
     font-size: 1.1rem;
     font-weight: bold;
     color: #555;
-    margin: 0; /* 周囲の余白をリセット */
+    margin: 0;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    background: none; /* 背景を消す */
-    border: none;     /* 枠線を消す */
-    padding: 0;      /* 余白を消す */
+    background: none;
+    border: none;
+    padding: 0;
   }
 
-  /* --- 説明文のスタイルを修正 --- */
   .category-info {
     font-size: 0.85rem;
     color: #777;
-    margin: 0.3rem 0 0 0; /* 上に少しだけ隙間を作る */
+    margin: 0.3rem 0 0 0;
   }
 
   .work-list {
     list-style: none;
     padding: 0;
-  }
-
-  .work-main {
-    flex: 1;
-  }
-
-  .work-header {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    margin-bottom: 0.3rem;
-    flex-wrap: wrap; /* 画面が狭い時に日付が下に落ちるように */
-  }
-
-  /* 工事中のタイトルの見た目 */
-  .work-title.is-draft {
-    color: #bbb; /* 文字を薄くする */
-    cursor: default; /* カーソルを矢印のままにする */
-  }
-
-  /* 外部リンクアイコンのスタイル */
-  .icon-external {
-    margin-left: 0.4rem;
-    color: var(--accent-color);
-    display: inline-flex; /* 追加：アイコンと文字を揃える */
-    align-items: center;  /* 追加：上下中央に */
-  }
-
-  .icon-external svg {
-    /* 必要ならここでアイコンの色を微調整できます */
-  }
-
-  .work-item {
-    margin-bottom: 1.5rem; /* 間隔を少し広げる */
-    display: flex;
-    align-items: flex-start; /* 上揃えに */
-    padding-bottom: 1rem;
-  }
-
-  .work-item a {
-    font-size: 1.1rem;
-    font-weight: bold; /* タイトルを少し強調 */
-  }
-
-  .work-description {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #666;
-    line-height: 1.5;
-  }
-
-  .work-date {
-    font-size: 0.8rem;
-    color: var(--accent-color);
-    font-family: sans-serif;
-    white-space: nowrap; /* 日付が途中で折れないように */
-  }
-
-  .work-badges {
-    display: flex;
-    gap: 0.4rem;
-  }
-
-  .badge-ongoing {
-    font-size: 0.7rem;
-    color: #fff;
-    border: 1px solid #ccc;
-    padding: 1px 6px;
-    border-radius: 2px;
-    background-color: #4F8FA8;
-  }
-
-  .badge-completed {
-    font-size: 0.7rem;
-    color: #fff;
-    padding: 1px 6px;
-    border-radius: 2px;
-    background-color: #7FAF8F;
-  }
-
-    /* 【UPバッジのCSSを追加】 */
-  .badge-updated {
-    font-size: 0.7rem;
-    font-weight: bold;
-    color: #fff;
-    background-color: #D4A017;
-    padding: 1px 6px;
-    border-radius: 2px;
-    line-height: 1.5; /* テキストの位置調整 */
-  }
-
-  /* 18バッジのスタイル（パッと見て分かる赤系） */
-  .badge-r18 {
-    font-size: 0.7rem;
-    font-weight: bold;
-    color: #fff;
-    background-color: #d32f2f; /* 警告色としての赤 */
-    padding: 1px 6px;
-    border-radius: 2px;
-  }
-
-  /* 文字数と日付をまとめるエリア */
-  .work-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    margin-left: 0;
-  }
-
-  /* 文字数のスタイル（日付と同じくらい控えめに） */
-  .work-word-count {
-    font-size: 0.8rem;
-    color: #888;
-    font-family: sans-serif;
-  }
-
-  /* スマホ等で日付が落ちる場合の調整 */
-  @media (max-width: 768px) {
-    .work-meta {
-      width: 100%;
-      margin-top: 0.2rem;
-    }
   }
 </style>
