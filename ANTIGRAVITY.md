@@ -3,31 +3,30 @@
 ## プロジェクト概要
 - **プロジェクト名**: Cozy Spark
 - **ゴール**: Astroで作成したサイトのコード整理（リファクタリング）を行い、保守性を向上させる。
-- **現在のフェーズ**: ページコンポーネントのリファクタリング
+- **現在のフェーズ**: コンテンツ管理 (`src/content/config.ts`) のリファクタリング
 
 ## 技術スタック
 - **フレームワーク**: Astro 5.0+
 - **スタイリング**: Component-Oriented Scoped CSS + `global.css`
+- **データ管理**: Astro Content Collections (Zod Schema)
 
 ## 要件定義
-- `[workId].astro` (作品詳細/短編表示) と `[episodeId].astro` (エピソード表示) のコードが複雑化している。
-- **課題**: `observer_rip/01.md` (シリーズ作品の一話) と、短編作品で、本文の表示幅が異なっている。
-    - 原因判明: 
-        - 短編 (`[workId].astro`で表示) は `narrow=false` (幅1000px)
-        - シリーズ (`[episodeId].astro`で表示) は `narrow=true` (幅700px)
-    - **解決策**: 小説本文を表示するときは、短編・連載問わず `narrow=true` (700px) に統一すべき。
+- `src/content/config.ts` が肥大化しつつあり、可読性が低下している。
+- **課題**: 
+    - 作品 (`works`) とエピソード (`episodes`) の定義が1つのファイルに混在している。
+    - `zod` スキーマの定義が長くなり、何が必須で何がオプションかがパッと見で分かりにくい。
+    - 将来フィールドが増えたときにさらに見通しが悪くなる。
 
 ### 提案する戦略
-1. **共通コンポーネントの作成 (`NovelViewer.astro`)**
-   - 小説本文の表示部分（縦書き/横書き対応、ルビ、字下げ、前後のナビゲーションなど）を共通化する。
-2. **ページファイルの責務整理**
-   - `[workId].astro`: 作品情報の取得と、短編なら `NovelViewer`、シリーズなら目次を表示。
-   - `[episodeId].astro`: エピソード情報の取得と、`NovelViewer` の表示。
-3. **デザインの統一**
-   - 小説本文ページは全て `narrow=true` (幅700px) で固定する。
+1. **スキーマ定義の分離**
+   - `src/content/schemas/works.ts` と `src/content/schemas/episodes.ts` に分割する。
+2. **型定義の明示**
+   - TypeScriptの型推論に頼るだけでなく、`infer` を使って型をエクスポートし、他のコンポーネントで使い回せるようにする。
+   - 例: `type Work = z.infer<typeof workSchema>;`
 
 ## MVPスコープ（リファクタリング計画）
-- **フェーズ 4: ページリファクタリング**
-  - [ ] `src/components/NovelViewer.astro` の作成。
-  - [ ] `src/pages/works/[workId].astro` のリファクタリング（短編の幅修正）。
-  - [ ] `src/pages/works/[workId]/[episodeId].astro` のリファクタリング（共通化）。
+- **フェーズ 5: コンテンツ管理の整理**
+  - [ ] `src/content/schemas/` ディレクトリの作成。
+  - [ ] `works` スキーマの分離。
+  - [ ] `episodes` スキーマの分離。
+  - [ ] `config.ts` をシンプルにする。
