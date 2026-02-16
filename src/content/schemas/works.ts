@@ -13,6 +13,15 @@ export const workSchema = z.object({
     isR18: z.boolean().default(false), // R18かどうか（デフォルトはfalse）
     wordCount: z.string().optional(),  // 文字数（例: "約10,000字" や "1.5万字"）
     isShort: z.boolean().default(false),
+    images: z.array(
+        z.union([
+            z.string(), // 画像パスのみ
+            z.object({
+                src: z.string(), // 画像パス
+                caption: z.string().optional(), // キャプション（任意）
+            }),
+        ])
+    ).optional(), // SS用画像リスト
 });
 
 export type Work = z.infer<typeof workSchema>;

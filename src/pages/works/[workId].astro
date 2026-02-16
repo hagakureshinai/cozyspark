@@ -3,6 +3,7 @@
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import NovelViewer from "../../components/NovelViewer.astro";
+import SSViewer from "../../components/SSViewer.astro";
 
 export async function getStaticPaths() {
   const allWorks = await getCollection("works");
@@ -38,9 +39,18 @@ export async function getStaticPaths() {
 
 const { work, episodes, firstEpisode } = Astro.props;
 const isShortStory = work.data.isShort;
+const isSS = work.data.category === "ss";
+
+console.log("--- Page Debug ---");
+console.log("Work ID:", work.id);
+console.log("Images Data:", JSON.stringify(work.data.images, null, 2));
 
 let Content = null;
 if (isShortStory && firstEpisode) {
+  const rendered = await render(firstEpisode);
+  Content = rendered.Content;
+} else if (isSS && firstEpisode) {
+  // SSでも本文（キャプション等）がある場合はレンダリングする
   const rendered = await render(firstEpisode);
   Content = rendered.Content;
 }
@@ -51,7 +61,6 @@ const cleanId = (id: string) =>
     .split("/")
     .pop()
     ?.replace(/\.[^/.]+$/, "") || id;
-
 // 最新エピソードのIDを取得
 let latestEpisodeId: string | null = null;
 if (episodes.length > 0) {
@@ -80,6 +89,8 @@ const workBasePath = `${baseUrl}/works/${cleanId(work.id)}`;
 
 {
   /* 
+    SSの場合 (isSS):
+      SSViewerを使用。Layout narrow={false}
     短編の場合 (isShortStory): 
       ヘッダーは幅広(1000px)で表示したいので Layout narrow={false}
       本文(NovelViewer)だけ個別に幅制御する
@@ -89,7 +100,34 @@ const workBasePath = `${baseUrl}/works/${cleanId(work.id)}`;
 }
 <Layout title={pageTitle} description={pageDescription} narrow={false}>
   {
-    isShortStory && Content ? (
+    isSS ? (
+      /* --- SS（掌編小説）の場合 --- */
+      <div class="work-detail-content">
+        <header class="work-header">
+          <h1 class="work-title-large">{work.data.title}</h1>
+          {work.data.description && (
+            <p class="work-description">{work.data.description}</p>
+          )}
+          <div class="work-meta">
+            {work.data.isUpdated && <span class="badge-updated">UP</span>}
+            {work.data.lastUpdated && (
+              <time class="work-date">
+                最終更新：
+                {work.data.lastUpdated
+                  .toLocaleDateString("ja-JP", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })
+                  .replace(/\//g, ".")}
+              </time>
+            )}
+          </div>
+        </header>
+
+        <SSViewer images={work.data.images}>{Content && <Content />}</SSViewer>
+      </div>
+    ) : isShortStory && Content ? (
       /* --- 短編・掌編の場合 --- */
       <div class="work-detail-content">
         <header class="work-header">
@@ -245,10 +283,12 @@ const workBasePath = `${baseUrl}/works/${cleanId(work.id)}`;
   .badge-ongoing {
     background: #4f8fa8;
     color: #fff;
+    white-space: nowrap;
   }
   .badge-completed {
     background: #7faf8f;
     color: #fff;
+    white-space: nowrap;
   }
 
   /* --- 目次リストエリア --- */
@@ -327,6 +367,10 @@ const workBasePath = `${baseUrl}/works/${cleanId(work.id)}`;
     background-color: #d4a017;
     padding: 1px 6px;
     border-radius: 2px;
+  }
+
+  /* 目次リスト内でのみマージンをつける */
+  .episode-main .badge-updated {
     margin-left: 0.8rem;
   }
 

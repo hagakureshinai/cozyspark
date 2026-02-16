@@ -1,0 +1,102 @@
+---
+// src/components/SSViewer.astro
+interface ImageItem {
+    src: string;
+    caption?: string;
+}
+
+interface Props {
+    images?: (string | ImageItem)[];
+}
+
+const { images = [] } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+// デバッグ用（ターミナルに出力されます）
+console.log("--- SSViewer Debug ---");
+console.log("Images prop:", JSON.stringify(images, null, 2));
+---
+
+<div class="ss-viewer">
+    <!-- デバッグ用：imagesが空ならメッセージを出す -->
+    {
+        images.length === 0 && (
+            <p style="color: red; text-align: center; border: 1px solid red; padding: 1rem;">
+                DEBUG: images is empty. <br />
+                Check your terminal for "SSViewer Debug" output.
+            </p>
+        )
+    }
+
+    <div class="ss-gallery">
+        {
+            images.map((image, index) => {
+                // デバッグ用
+                // console.log(`Image [${index}]:`, image);
+
+                const src =
+                    typeof image === "string" ? image : image?.src || "";
+                const caption =
+                    typeof image === "object" && image !== null
+                        ? image.caption
+                        : null;
+
+                return (
+                    <div class="ss-image-container">
+                        <img src={`${baseUrl}${src}`} alt="" loading="lazy" />
+                        {caption && <p class="ss-image-caption">{caption}</p>}
+                    </div>
+                );
+            })
+        }
+    </div>
+
+    <div class="ss-content">
+        <slot />
+    </div>
+</div>
+
+<style>
+    .ss-viewer {
+        max-width: 800px; /* テキストより少し広めでも良いかも */
+        margin: 0 auto;
+        padding-bottom: 4rem;
+    }
+
+    .ss-gallery {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem; /* 画像間の隙間 */
+        margin-bottom: 3rem;
+    }
+
+    .ss-image-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .ss-image-container img {
+        max-width: 100%;
+        height: auto;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* ほんのり影をつけて独立感を出す */
+        border-radius: 4px; /* 角を少し丸める */
+    }
+
+    .ss-image-caption {
+        margin-top: 0.8rem;
+        font-size: 0.9rem;
+        color: #666;
+        text-align: center;
+        line-height: 1.5;
+        white-space: pre-wrap; /* 改行を有効にする */
+    }
+
+    .ss-content {
+        max-width: 700px; /* テキスト部分は読みやすい幅に合わせる */
+        margin: 0 auto;
+        line-height: 1.8;
+        color: #444;
+    }
+</style>
