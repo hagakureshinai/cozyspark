@@ -43,7 +43,19 @@ console.log("Images prop:", JSON.stringify(images, null, 2));
 
                 return (
                     <div class="ss-image-container">
-                        <img src={`${baseUrl}${src}`} alt="" loading="lazy" />
+                        <a
+                            href={`${baseUrl}${src}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="ss-image-link"
+                        >
+                            <img
+                                src={`${baseUrl}${src}`}
+                                alt=""
+                                loading="lazy"
+                            />
+                            <span class="ss-expand-hint">タップで拡大表示</span>
+                        </a>
                         {caption && <p class="ss-image-caption">{caption}</p>}
                     </div>
                 );
@@ -58,7 +70,7 @@ console.log("Images prop:", JSON.stringify(images, null, 2));
 
 <style>
     .ss-viewer {
-        max-width: 800px; /* テキストより少し広めでも良いかも */
+        max-width: 800px;
         margin: 0 auto;
         padding-bottom: 4rem;
     }
@@ -74,14 +86,36 @@ console.log("Images prop:", JSON.stringify(images, null, 2));
     .ss-image-container {
         width: 100%;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
     }
 
-    .ss-image-container img {
+    .ss-image-link {
+        display: block;
+        position: relative;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .ss-image-link img {
         max-width: 100%;
         height: auto;
-        box-shadow: 0 0px 8px rgba(0, 0, 0, 0.5); /* ほんのり影をつけて独立感を出す */
-        border-radius: 4px; /* 角を少し丸める */
+        box-shadow: 0 0px 8px rgba(0, 0, 0, 0.5);
+        border-radius: 4px;
+        transition: transform 0.2s ease;
+    }
+
+    .ss-image-link:hover img {
+        opacity: 0.9;
+    }
+
+    /* 拡大ヒントのスタイル */
+    .ss-expand-hint {
+        display: block;
+        font-size: 0.75rem;
+        color: #888;
+        margin-top: 0.5rem;
     }
 
     .ss-image-caption {
@@ -90,13 +124,50 @@ console.log("Images prop:", JSON.stringify(images, null, 2));
         color: #666;
         text-align: center;
         line-height: 1.5;
-        white-space: pre-wrap; /* 改行を有効にする */
+        white-space: pre-wrap;
     }
 
     .ss-content {
-        max-width: 700px; /* テキスト部分は読みやすい幅に合わせる */
+        max-width: 700px;
         margin: 0 auto;
         line-height: 1.8;
         color: #444;
+    }
+
+    /* --- スマホ表示調整 --- */
+    @media (max-width: 768px) {
+        .ss-gallery {
+            /* モバイルでは左右のパディングを相殺して画像を画面端まで広げる（Full Bleed） */
+            /* global.css の --side-padding を打ち消す */
+            width: calc(100% + (var(--side-padding) * 2));
+            margin-left: calc(var(--side-padding) * -1);
+            margin-right: calc(var(--side-padding) * -1);
+            gap: 2rem;
+        }
+
+        .ss-image-link img {
+            border-radius: 0; /* 画面端まで広げる場合は角丸をなくすとスッキリする */
+            width: 100%;
+        }
+
+        .ss-expand-hint {
+            /* スマホでヒントを少し見やすく */
+            background: rgba(0, 0, 0, 0.05);
+            padding: 4px;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .ss-image-container {
+            /* キャプションがある場合は左右の余白を戻す */
+            padding: 0 var(--side-padding);
+        }
+
+        /* 画像リンク自体は padding を無視して端まで広げるために再調整 */
+        .ss-image-link {
+            width: calc(100% + (var(--side-padding) * 2));
+            margin-left: calc(var(--side-padding) * -1);
+            margin-right: calc(var(--side-padding) * -1);
+        }
     }
 </style>
