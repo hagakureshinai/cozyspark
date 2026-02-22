@@ -4,6 +4,7 @@ description: "X(Twitter)企画[創作創作BL版深夜の60分一本勝負 毎�
 category: "ss"  # series(シリーズ), single(単発), ss(掌編)
 status: "completed" # completed(完結), ongoing(連載中)
 isDraft: false # true(工事中)
+isUpdated: true
 order: 2            # 一覧に並べる順番（1が一番上）
 images:
   - "/images/ss/others/11.png"
