@@ -23,6 +23,14 @@ const formatDate = (date: Date) => {
         })
         .replace(/\//g, ".");
 };
+
+const parseMarkdownLinks = (text: string) => {
+    // Markdownの [リンク名](URL) 形式を抽出して <a> タグに変換
+    return text.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+    );
+};
 ---
 
 <li class={`work-item ${pickupLabel ? "pickup-item" : ""}`}>
@@ -106,7 +114,10 @@ const formatDate = (date: Date) => {
 
         {
             work.data.description && (
-                <p class="work-description">{work.data.description}</p>
+                <p
+                    class="work-description"
+                    set:html={parseMarkdownLinks(work.data.description)}
+                />
             )
         }
     </div>
