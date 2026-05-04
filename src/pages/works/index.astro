@@ -4,7 +4,9 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import WorkCard from "../../components/WorkCard.astro";
 
-const allWorks = await getCollection("works");
+const allWorks = await getCollection("works", ({ data }) => {
+  return data.isDraft !== true;
+});
 const sortedWorks = allWorks.sort((a, b) => a.data.order - b.data.order);
 
 const seriesWorks = sortedWorks.filter(
@@ -24,7 +26,7 @@ const getSlug = (id: string) => id.replace(/\.[^/.]+$/, "");
 // 「初めての方はこちら」に表示したい作品の [ID]（ファイル名）と [見出し] を設定します。
 // 例: src/content/works/observer_love.md なら 'observer_love' と書く
 const pickupConfig = [
-  { id: "observer_cake", label: "＊年下攻×クール受 観測者シリーズ試し読み" },
+  //  { id: "observer_cake", label: "＊年下攻×クール受 観測者シリーズ試し読み" },
   { id: "beyond_border", label: "＊おじさま×おじさま" },
   { id: "beyond_control", label: "＊えちえち" },
 ];
@@ -66,7 +68,7 @@ const pickupWorks = pickupConfig
         <div class="category-header-group">
           <h2>観測者シリーズ（長編・連作）</h2>
           <p class="category-info">
-            大学生・秋吉悠也(20)×大学教員・藤堂圭(28)のシリーズ。
+            大学生・秋吉悠也(20)×大学教員・藤堂圭(27)のシリーズ。
           </p>
         </div>
 

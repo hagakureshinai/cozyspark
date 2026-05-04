@@ -4,6 +4,7 @@ description: "贈り物のリップバームを私の唇に塗り、彼は笑う
 lastUpdated: 2026-02-14
 category: "series"  # series(シリーズ), single(単発), ss(掌編)
 status: "completed" # completed(完結), ongoing(連載中)
+isDraft: true
 isUpdated: true
 wordCount: "約3,400字"
 isShort: true 
