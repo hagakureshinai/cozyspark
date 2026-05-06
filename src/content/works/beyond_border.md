@@ -7,7 +7,6 @@ status: "completed" # completed(完結), ongoing(連載中)
 platform: "pixiv"
 externalLink: "https://www.pixiv.net/novel/show.php?id=25909519"
 isR18: true
-isDraft: false
 wordCount: "約1.4万字"
 order: 3            # 一覧に並べる順番（1が一番上）
 ---
