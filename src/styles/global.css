@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;600&display=swap');
+
 :root {
     --bg-color: #fdfdfd;
     --text-color: #333;
@@ -8,7 +10,6 @@
     --warning-color: #A03A3A;
     --container-max-width: 1000px;
     --side-padding: 1.5rem;
-    /* 左右の最低余白を定義 */
 }
 
 /* ★重要：すべての要素の計算方法を「余白を含める」に統一 */
@@ -19,10 +20,11 @@
 }
 
 html {
-    font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif;
+    font-family: 'Noto Serif JP', 'Yu Mincho', 'YuMincho', 'Hiragino Mincho ProN', serif;
     background: var(--bg-color);
     color: var(--text-color);
 }
+
 
 body {
     margin: 0;
