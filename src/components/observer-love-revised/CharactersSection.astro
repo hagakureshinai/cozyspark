@@ -1,45 +1,49 @@
 ---
-
+const characters = [
+  {
+    role: "University Student",
+    name: "秋吉 悠也",
+    nameEn: "Akiyoshi Yuya",
+    quote: "「藤堂先生に指導してもらいたいです」",
+    description: [
+      "才能も容姿も恵まれながら、<br />満たされない渇きを抱える青年。",
+      "はじめて『本気で向き合ってくれた』圭に<br />執着にも似た一途な想いを向け、迷いなく踏み込んでいく。"
+    ]
+  },
+  {
+    role: "Lecturer",
+    name: "藤堂 圭",
+    nameEn: "Todo Kei",
+    quote: "「感情に価値はない。判断を鈍らせるだけだ」",
+    description: [
+      "理性を信奉し、<br />誰にも心を開かない孤高の大学講師。",
+      "だがその冷たさの奥には、<br />裏切りによって刻まれた深い傷を隠している。"
+    ]
+  }
+];
 ---
 
 <section class="characters">
   <div class="section-container">
     <h2 class="section-title-en">CHARACTERS</h2>
+    
     <div class="char-grid">
-      <div class="char-card glass-card">
-        <div class="char-info">
-          <span class="char-role">University Student</span>
-          <h3 class="char-name">秋吉 悠也 <span>Akiyoshi Yuya</span></h3>
-          <p class="char-quote">「藤堂先生に指導してもらいたいです」</p>
+      {characters.map((char) => (
+        <article class="glass-card char-card">
+          <header>
+            <span class="char-role">{char.role}</span>
+            <h3 class="char-name">{char.name} <span>{char.nameEn}</span></h3>
+          </header>
+          
+          <blockquote class="char-quote">{char.quote}</blockquote>
+          
           <div class="char-desc">
-            <p>
-              才能も容姿も恵まれながら、<br />
-              満たされない渇きを抱える青年。
-            </p>
-            <p>
-              はじめて『本気で向き合ってくれた』圭に<br />
-              執着にも似た一途な想いを向け、迷いなく踏み込んでいく。
-            </p>
+            {char.description.map((text) => (
+              <p set:html={text} />
+            ))}
           </div>
-        </div>
-      </div>
-      <div class="char-card glass-card">
-        <div class="char-info">
-          <span class="char-role">Lecturer</span>
-          <h3 class="char-name">藤堂 圭 <span>Todo Kei</span></h3>
-          <p class="char-quote">「感情に価値はない。判断を鈍らせるだけだ」</p>
-          <div class="char-desc">
-            <p>
-              理性を信奉し、<br />
-              誰にも心を開かない孤高の大学講師。
-            </p>
-            <p>
-              だがその冷たさの奥には、<br />
-              裏切りによって刻まれた深い傷を隠している。
-            </p>
-          </div>
-        </div>
-      </div>
+        </article>
+      ))}
     </div>
   </div>
 </section>
@@ -74,7 +78,7 @@
   .char-quote {
     font-size: 1rem;
     color: var(--lp-accent);
-    margin-bottom: 1.5rem;
+    margin: 0 0 1.5rem 0; /* blockquoteの初期マージンをリセット */
     font-style: italic;
     border-left: 2px solid var(--lp-accent);
     padding-left: 1rem;

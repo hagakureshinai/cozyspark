@@ -13,14 +13,27 @@
     - Header.astro : ヘッダー
     - NovelViewer.astro : 小説本文表示コンポーネント
     - SSViewer.astro : 掌編小説表示コンポーネント
-    - WorkCard.astro : 作品カード←★★？？？？★★
+    - WorkCard.astro : 作品カード
+    - `works/` : 作品一覧・詳細ページ用コンポーネント
+        - WorksBanner.astro : 特設ページ案内バナー
+        - WorksCategorySection.astro : カテゴリ別作品リスト
+        - SeriesDetail.astro : シリーズ作品用目次UI
+        - ShortStoryDetail.astro : 短編用UI
+        - SSDetail.astro : 掌編用UI
+        - EpisodeList.astro : エピソードリストUI
+    - `observer-love-revised/` : 特設サイト用コンポーネント
+        - HeroSection.astro : ファーストビュー
+        - StorySection.astro : あらすじ
+        - CharactersSection.astro : キャラクター紹介
+        - PointSection.astro : 見どころ
+        - CtaSection.astro : 読むボタン
 - `src/content/episodes/` : 小説本文（各話のエピソード）。Markdown形式で記述。
     - 作品名/話数.md
 - `src/content/policy/` : サイトポリシー
     - index.md : サイトポリシーに記載している本文
 - `src/content/schemas/` : スキーマ設定
-    - episodes.ts : エピソードのスキーマ設定←★★？？？？★★
-    - works.ts : 作品のスキーマ設定←★★？？？？★★
+    - episodes.ts : エピソードのスキーマ設定
+    - works.ts : 作品のスキーマ設定
 - `src/content/works/` : 作品のメタ情報（作品名、あらすじ、タグ、表示非表示フラグ等）
     - 作品名/作品ID.md
 - `src/content/`
