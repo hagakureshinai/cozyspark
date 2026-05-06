@@ -1,0 +1,86 @@
+---
+// src/components/works/WorksBanner.astro
+interface Props {
+  baseUrl: string;
+}
+
+const { baseUrl } = Astro.props;
+---
+
+<section class="special-banner-section">
+  <a href={`${baseUrl}/works/observer-love-revised/`} class="special-banner">
+    <div class="banner-content">
+      <span class="banner-label">NOW SERIALIZING</span>
+      <h2 class="banner-title">『観測者は恋を知る』カクヨムで連載中！</h2>
+      <p class="banner-link-text">特設ページはこちら <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></p>
+    </div>
+  </a>
+</section>
+
+<style>
+  .special-banner-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .special-banner {
+    display: block;
+    text-decoration: none;
+    background: linear-gradient(135deg, #fff0f3 0%, #fff 100%);
+    border: 1px solid #d8a7b1;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .special-banner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: #d8a7b1;
+  }
+
+  .special-banner:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(216, 167, 177, 0.2);
+    border-color: #c98a96;
+  }
+
+  .banner-label {
+    font-size: 0.75rem;
+    color: #d8a7b1;
+    letter-spacing: 0.2em;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .banner-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.3rem;
+    color: #5d4a4a;
+    margin: 0 0 0.8rem 0;
+    font-weight: 500;
+  }
+
+  .banner-link-text {
+    font-size: 0.9rem;
+    color: #9b8a8a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+  }
+
+  .banner-link-text svg {
+    transition: transform 0.3s ease;
+  }
+
+  .special-banner:hover .banner-link-text svg {
+    transform: translateX(5px);
+  }
+</style>

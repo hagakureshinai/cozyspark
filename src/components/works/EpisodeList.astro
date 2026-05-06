@@ -1,0 +1,136 @@
+---
+interface Props {
+  episodes: any[];
+  workBasePath: string;
+  shouldShowWorkUpdateBadge: boolean;
+  latestEpisodeId: string | null;
+  cleanId: (id: string) => string;
+}
+
+const { episodes, workBasePath, shouldShowWorkUpdateBadge, latestEpisodeId, cleanId } = Astro.props;
+---
+<section class="episode-list-section">
+  <h2 class="section-title">目次</h2>
+  <ul class="episode-list">
+    {episodes.map((episode) => {
+      const episodeId = cleanId(episode.id);
+      const isLatestAndUpdated = shouldShowWorkUpdateBadge && episodeId === latestEpisodeId;
+
+      return (
+        <li>
+          <a href={`${workBasePath}/${episodeId}/`}>
+            <div class="episode-info-container">
+              <div class="episode-main">
+                <span class="title">{episode.data.title}</span>
+                {isLatestAndUpdated && (
+                  <span class="badge-updated">UP</span>
+                )}
+              </div>
+
+              {(episode.data.wordCount || episode.data.description) && (
+                <div class="episode-details">
+                  {episode.data.wordCount && (
+                    <span class="word-count">{episode.data.wordCount}</span>
+                  )}
+                  {episode.data.description && (
+                    <span class="episode-description">{episode.data.description}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+  {episodes.length === 0 && <p>エピソードはまだありません。</p>}
+</section>
+
+<style>
+  .section-title {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  .episode-list {
+    list-style: none;
+    padding: 0;
+  }
+  .episode-list li {
+    border-bottom: 1px dashed #eee;
+  }
+  .episode-list a {
+    display: block;
+    padding: 1rem 0;
+    text-decoration: none;
+  }
+  .episode-list a:hover .title {
+    text-decoration: underline;
+  }
+  .episode-info-container {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+  }
+  .episode-main {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .episode-main .title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    color: var(--link-color);
+  }
+  .episode-main .title::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 1.2rem;
+    background-color: var(--accent-color);
+    margin-right: 1rem;
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+  .episode-details {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    font-size: 0.85rem;
+    color: #777;
+  }
+  .word-count {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .episode-description {
+    line-height: 1.4;
+  }
+  .badge-updated {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #d4a017;
+    padding: 1px 6px;
+    border-radius: 2px;
+  }
+  .episode-main .badge-updated {
+    margin-left: 0.8rem;
+  }
+  @media (max-width: 768px) {
+    .episode-info-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3rem;
+    }
+    .episode-details {
+      flex-direction: column;
+      gap: 0.2rem;
+      padding-left: 1.4rem;
+    }
+  }
+</style>

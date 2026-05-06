@@ -1,0 +1,94 @@
+---
+
+---
+
+<section class="characters">
+  <div class="section-container">
+    <h2 class="section-title-en">CHARACTERS</h2>
+    <div class="char-grid">
+      <div class="char-card glass-card">
+        <div class="char-info">
+          <span class="char-role">University Student</span>
+          <h3 class="char-name">秋吉 悠也 <span>Akiyoshi Yuya</span></h3>
+          <p class="char-quote">「藤堂先生に指導してもらいたいです」</p>
+          <div class="char-desc">
+            <p>
+              才能も容姿も恵まれながら、<br />
+              満たされない渇きを抱える青年。
+            </p>
+            <p>
+              はじめて『本気で向き合ってくれた』圭に<br />
+              執着にも似た一途な想いを向け、迷いなく踏み込んでいく。
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="char-card glass-card">
+        <div class="char-info">
+          <span class="char-role">Lecturer</span>
+          <h3 class="char-name">藤堂 圭 <span>Todo Kei</span></h3>
+          <p class="char-quote">「感情に価値はない。判断を鈍らせるだけだ」</p>
+          <div class="char-desc">
+            <p>
+              理性を信奉し、<br />
+              誰にも心を開かない孤高の大学講師。
+            </p>
+            <p>
+              だがその冷たさの奥には、<br />
+              裏切りによって刻まれた深い傷を隠している。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .characters {
+    padding: 3rem 0;
+  }
+  .char-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .char-role {
+    font-size: 0.8rem;
+    color: var(--lp-accent);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .char-name {
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+  }
+  .char-name span {
+    font-size: 0.9rem;
+    color: var(--lp-text-dim);
+    display: block;
+    font-weight: 300;
+    margin-top: 0.2rem;
+  }
+  .char-quote {
+    font-size: 1rem;
+    color: var(--lp-accent);
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    border-left: 2px solid var(--lp-accent);
+    padding-left: 1rem;
+    text-align: left;
+  }
+  .char-desc {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--lp-text-dim);
+    text-align: left;
+  }
+  @media (max-width: 768px) {
+    .char-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

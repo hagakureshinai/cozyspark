@@ -1,5 +1,10 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
+import HeroSection from "../../../components/observer-love-revised/HeroSection.astro";
+import StorySection from "../../../components/observer-love-revised/StorySection.astro";
+import CharactersSection from "../../../components/observer-love-revised/CharactersSection.astro";
+import PointSection from "../../../components/observer-love-revised/PointSection.astro";
+import CtaSection from "../../../components/observer-love-revised/CtaSection.astro";
 
 const title = "観測者は恋を知る 改訂版";
 const description =
@@ -8,147 +13,12 @@ const description =
 
 <Layout title={title} description={description}>
   <div class="lp-container">
-    {/* ① HERO */}
-    <section class="hero">
-      <div class="diagram-overlay"></div>
-      <div class="hero-content">
-        <h1 class="hero-title">
-          <span>観測者は</span><br />
-          <span>恋を知る</span>
-        </h1>
-        <div class="hero-copy-group">
-          <p class="hero-catch">
-            感情はノイズだと、ずっとそう思っていた。<br />
-            その眼差しに囚われるまでは。
-          </p>
-        </div>
-      </div>
-      <div class="scroll-indicator">
-        <span>Scroll</span>
-        <div class="line"></div>
-      </div>
-    </section>
+    <HeroSection />
+    <StorySection />
+    <CharactersSection />
+    <PointSection />
+    <CtaSection />
 
-    {/* ② STORY / PREMISE */}
-    <section class="story-section">
-      <div class="section-container">
-        <h2 class="section-title-en">STORY</h2>
-        <div class="glass-card story-card">
-          <div class="story-content">
-            <p>彼は、気づいていない。</p>
-            <p>スツールの角度を直さなかったことも。</p>
-            <p>視線が合うたびに、鼓動が跳ねる理由も。</p>
-            <p>誰かが彼を「道具」にした瞬間、</p>
-            <p>自分でも驚くほどの怒りがこみあげたことも。</p>
-            <p>ちいさな羊羹の箱に残る体温を、確かめてしまったことも。</p>
-            <p>理性という名の鎧は、とうに穴だらけだった。</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    {/* ③ CHARACTERS */}
-    <section class="characters">
-      <div class="section-container">
-        <h2 class="section-title-en">CHARACTERS</h2>
-        <div class="char-grid">
-          <div class="char-card glass-card">
-            <div class="char-info">
-              <span class="char-role">University Student</span>
-              <h3 class="char-name">秋吉 悠也 <span>Akiyoshi Yuya</span></h3>
-              <p class="char-quote">「藤堂先生に指導してもらいたいです」</p>
-              <div class="char-desc">
-                <p>
-                  才能も容姿も恵まれながら、<br />
-                  満たされない渇きを抱える年下の天才。
-                </p>
-                <p>
-                  はじめて『本気で向き合ってくれた』圭に<br />
-                  執着にも似た一途な想いを向け、迷いなく踏み込んでいく。
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="char-card glass-card">
-            <div class="char-info">
-              <span class="char-role">Lecturer</span>
-              <h3 class="char-name">藤堂 圭 <span>Todo Kei</span></h3>
-              <p class="char-quote">
-                「感情に価値はない。判断を鈍らせるだけだ」
-              </p>
-              <div class="char-desc">
-                <p>
-                  理性を信奉し、<br />
-                  誰にも心を開かない孤高の大学講師。
-                </p>
-                <p>
-                  だがその冷たさの奥には、<br />
-                  裏切りによって刻まれた深い傷を隠している。
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    {/* ④ RELATIONSHIP / POINT */}
-    <section class="point-section">
-      <div class="section-container">
-        <h2 class="section-title-en">POINT</h2>
-        <div class="point-grid">
-          <div class="point-card glass-card">
-            <h3>理性が崩れていく恋</h3>
-            <p>冷静で理知的な男が、少しずつ恋に呑まれていく過程。</p>
-          </div>
-          <div class="point-card glass-card">
-            <h3>知性で惹かれ合う関係性</h3>
-            <p>尊敬と執着が恋へ変わる、知的共鳴型BL。</p>
-          </div>
-          <div class="point-card glass-card">
-            <h3>年下執着攻め</h3>
-            <p>明るく見えて危うい、迷いのない一途な愛。</p>
-          </div>
-          <div class="point-card glass-card">
-            <h3>傷を抱えた大人の再生譚</h3>
-            <p>感情を抑え続けてきた男が、はじめて心のままに選び取る物語。</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    {/* ⑥ CTA */}
-    <section class="cta-section">
-      <div class="cta-card glass-card">
-        <h2 class="section-title-en">READ NOW</h2>
-        <p class="cta-heading">物語の続きは、カクヨムで。</p>
-        <p class="cta-text">
-          理性と恋がせめぎ合うその結末を、<br />
-          どうか最後まで見届けてください。
-        </p>
-        <a
-          href="https://kakuyomu.jp/works/2912051598581907032"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="cta-button"
-        >
-          カクヨムで<br class="br-mobile" />連載中の本編を読む
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg
-          >
-        </a>
-      </div>
-    </section>
-
-    {/* ⑦ FOOTNOTE */}
     <footer class="lp-footnote">
       <p>※本作は2025年に発表した旧版を全面改稿した改訂版です。</p>
     </footer>
@@ -173,13 +43,13 @@ const description =
     overflow-x: hidden;
   }
 
-  .section-container {
+  :global(.section-container) {
     max-width: 1000px;
     margin: 0 auto;
     padding: 0 1.5rem;
   }
 
-  .glass-card {
+  :global(.glass-card) {
     background: var(--lp-glass);
     backdrop-filter: blur(12px);
     border: 1px solid var(--lp-glass-border);
@@ -188,312 +58,16 @@ const description =
     box-shadow: 0 8px 32px rgba(216, 167, 177, 0.1);
   }
 
-  .section-title-en {
-    font-size: 1.1rem; /* さらに小さくさりげなく */
-    letter-spacing: 0.4em; /* 字間を広げて宝石のような配置に */
+  :global(.section-title-en) {
+    font-size: 1.1rem;
+    letter-spacing: 0.4em;
     text-align: center;
-    margin-bottom: 1.8rem; /* タイトルとコンテンツの距離も縮小 */
+    margin-bottom: 1.8rem;
     color: var(--lp-accent);
     font-weight: 300;
     opacity: 0.7;
   }
 
-  /* --- Hero Section --- */
-  .hero {
-    height: 90vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    background: radial-gradient(circle at center, #ffffff 0%, #fff0f3 100%);
-    overflow: hidden;
-  }
-
-  .hero::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image:
-      linear-gradient(rgba(216, 167, 177, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(216, 167, 177, 0.1) 1px, transparent 1px);
-    background-size: 100px 100px;
-    mask-image: radial-gradient(circle at center, black, transparent 80%);
-    z-index: 0;
-  }
-
-  .hero::after {
-    content: "";
-    position: absolute;
-    width: 800px;
-    height: 800px;
-    border: 1px solid rgba(216, 167, 177, 0.1);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 0;
-  }
-
-  .diagram-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 0;
-    opacity: 0.4;
-    pointer-events: none;
-  }
-
-  .diagram-overlay::before {
-    content: "";
-    position: absolute;
-    width: 400px;
-    height: 400px;
-    border: 0.5px solid rgba(216, 167, 177, 0.2);
-    top: 20%;
-    left: 10%;
-    transform: rotate(45deg);
-  }
-
-  .diagram-overlay::after {
-    content: "";
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    border: 0.5px solid rgba(216, 167, 177, 0.2);
-    border-radius: 50%;
-    bottom: 10%;
-    right: 5%;
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-label {
-    font-size: 0.9rem;
-    letter-spacing: 0.3em;
-    color: var(--lp-accent);
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    animation: fadeInDown 1.5s ease-out;
-  }
-
-  .hero-title {
-    font-size: clamp(3rem, 10vw, 5.5rem);
-    font-weight: 300;
-    letter-spacing: 0.1em;
-    line-height: 1.3;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-title span {
-    display: inline-block;
-    animation: fadeInUp 1.5s ease-out;
-  }
-
-  .hero-copy-group {
-    animation: fadeIn 2s ease-out 1s both;
-  }
-
-  .hero-catch {
-    font-size: 1.4rem;
-    line-height: 1.8;
-    letter-spacing: 0.2em;
-    margin-bottom: 0;
-    color: var(--lp-text);
-  }
-
-  .hero-subcopy {
-    font-size: 1rem;
-    line-height: 1.8;
-    color: var(--lp-text-dim);
-    letter-spacing: 0.1em;
-  }
-
-  .scroll-indicator {
-    position: absolute;
-    bottom: 1.5rem; /* より下端に寄せる */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem; /* 少し詰め */
-    color: var(--lp-text-dim);
-    font-size: 0.8rem;
-    letter-spacing: 0.1em;
-  }
-
-  .scroll-indicator .line {
-    width: 1px;
-    height: 45px; /* 60pxから短縮して余白を確保 */
-    background: linear-gradient(to bottom, var(--lp-accent), transparent);
-    animation: scrollLine 2s infinite;
-  }
-
-  /* --- Story Section --- */
-  .story-section {
-    padding: 4rem 0; /* さらに削減 */
-  }
-
-  .story-card {
-    max-width: 720px;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .story-content {
-    font-size: 1.05rem;
-    line-height: 2.2;
-  }
-
-  .story-highlight {
-    font-size: 1.3rem;
-    letter-spacing: 0.2em;
-    margin-top: 0.8rem;
-    color: var(--lp-text);
-  }
-
-  /* --- Characters Section --- */
-  .characters {
-    padding: 3rem 0;
-  }
-
-  .char-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-
-  .char-role {
-    font-size: 0.8rem;
-    color: var(--lp-accent);
-    letter-spacing: 0.1em;
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-
-  .char-name {
-    font-size: 1.6rem;
-    margin-bottom: 0.8rem;
-  }
-
-  .char-name span {
-    font-size: 0.9rem;
-    color: var(--lp-text-dim);
-    display: block;
-    font-weight: 300;
-    margin-top: 0.2rem;
-  }
-
-  .char-quote {
-    font-size: 1rem;
-    color: var(--lp-accent);
-    margin-bottom: 1.5rem;
-    font-style: italic;
-    border-left: 2px solid var(--lp-accent);
-    padding-left: 1rem;
-    text-align: left;
-  }
-
-  .char-desc {
-    font-size: 0.95rem;
-    line-height: 1.8;
-    color: var(--lp-text-dim);
-    text-align: left;
-  }
-
-  /* --- Point Section --- */
-  .point-section {
-    padding: 4rem 0;
-  }
-
-  .point-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-
-  .point-card h3 {
-    font-size: 1.1rem;
-    color: var(--lp-accent);
-    margin-bottom: 0.8rem;
-    border-bottom: 1px solid var(--lp-glass-border);
-    padding-bottom: 0.4rem;
-  }
-
-  .point-card p {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--lp-text-dim);
-  }
-
-  /* --- Theme Section --- */
-  .theme-section {
-    padding: 4rem 0;
-    text-align: center;
-    background: rgba(216, 167, 177, 0.05);
-  }
-
-  .theme-content {
-    font-size: 1.1rem;
-    line-height: 2;
-    letter-spacing: 0.1em;
-    max-width: 700px;
-    margin: 0 auto;
-  }
-
-  /* --- CTA Section --- */
-  .cta-section {
-    padding: 4rem 0;
-    text-align: center;
-  }
-
-  .cta-card {
-    max-width: 600px;
-    margin: 0 auto;
-    border: 1px solid var(--lp-accent);
-    padding: 2rem; /* さらにスリムに */
-  }
-
-  .cta-heading {
-    font-size: 1.4rem;
-    margin-bottom: 0.8rem;
-    color: var(--lp-text);
-  }
-
-  .cta-text {
-    color: var(--lp-text-dim);
-    margin-bottom: 2.5rem;
-    line-height: 1.8;
-  }
-
-  .cta-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 1rem;
-    background-color: var(--lp-accent);
-    color: #fff;
-    text-decoration: none;
-    padding: 1rem 2.5rem;
-    border-radius: 2px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-  }
-
-  .cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(216, 167, 177, 0.4);
-    filter: brightness(1.05);
-  }
-
-  /* --- Footnote --- */
   .lp-footnote {
     padding: 3rem 0;
     text-align: center;
@@ -502,89 +76,11 @@ const description =
     border-top: 1px solid var(--lp-glass-border);
   }
 
-  /* --- Animations --- */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes scrollLine {
-    0% {
-      transform: scaleY(0);
-      transform-origin: top;
-    }
-    50% {
-      transform: scaleY(1);
-      transform-origin: top;
-    }
-    51% {
-      transform: scaleY(1);
-      transform-origin: bottom;
-    }
-    100% {
-      transform: scaleY(0);
-      transform-origin: bottom;
-    }
-  }
-
-  .br-mobile {
-    display: none;
-  }
-
-  /* --- Responsive --- */
   @media (max-width: 768px) {
-    .br-mobile {
-      display: inline;
-    }
     .lp-container {
       margin: -2rem -1rem;
     }
-    .hero-title {
-      font-size: 3rem;
-    }
-    .hero-catch {
-      font-size: 1.2rem;
-    }
-    .char-grid,
-    .point-grid {
-      grid-template-columns: 1fr;
-    }
-    .story-section,
-    .point-section,
-    .theme-section,
-    .cta-section {
-      padding: 5rem 0;
-    }
-    .story-content {
-      font-size: 1rem;
-    }
-    .glass-card {
+    :global(.glass-card) {
       padding: 2rem 1.5rem;
     }
   }

@@ -1,0 +1,71 @@
+---
+import SSViewer from "../SSViewer.astro";
+
+interface Props {
+  work: any;
+  Content: any;
+  parseMarkdownLinks: (text: string) => string;
+}
+
+const { work, Content, parseMarkdownLinks } = Astro.props;
+---
+<div class="work-detail-content">
+  <header class="work-header">
+    <h1 class="work-title-large">{work.data.title}</h1>
+    {work.data.description && (
+      <p class="work-description" set:html={parseMarkdownLinks(work.data.description)} />
+    )}
+    <div class="work-meta">
+      {work.data.isUpdated && <span class="badge-updated">UP</span>}
+      {work.data.lastUpdated && (
+        <time class="work-date">
+          最終更新：
+          {work.data.lastUpdated
+            .toLocaleDateString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit" })
+            .replace(/\//g, ".")}
+        </time>
+      )}
+    </div>
+  </header>
+  <SSViewer images={work.data.images}>{Content && <Content />}</SSViewer>
+</div>
+
+<style>
+  .work-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 2rem;
+  }
+  .work-title-large {
+    font-size: 2rem;
+    font-weight: normal;
+    margin-bottom: 1rem;
+  }
+  .work-description {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    color: #444;
+  }
+  .work-meta {
+    font-size: 0.9rem;
+    color: #888;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .badge-updated {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #d4a017;
+    padding: 1px 6px;
+    border-radius: 2px;
+  }
+  @media (max-width: 768px) {
+    .work-date {
+      flex-basis: 100%;
+      margin-top: 0.2rem;
+    }
+  }
+</style>
