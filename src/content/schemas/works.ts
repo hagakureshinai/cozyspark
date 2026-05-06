@@ -8,6 +8,7 @@ export const workSchema = z.object({
     status: z.enum(['ongoing', 'completed']),   // 連載中, 完結
     order: z.number(),                            // 表示順
     isUpdated: z.boolean().optional(),            // 最新更新バッジ判定用（任意）
+    platform: z.enum(['pixiv', 'kakuyomu']).optional(), // プラットフォーム判定（任意）
     externalLink: z.string().url().optional(), // 外部リンクURL
     isDraft: z.boolean().optional(),           // 工事中フラグ
     isR18: z.boolean().default(false), // R18かどうか（デフォルトはfalse）

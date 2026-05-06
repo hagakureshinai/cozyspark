@@ -8,6 +8,7 @@ interface Props {
 }
 
 const { work, pickupLabel, showStatusBadge = true } = Astro.props;
+console.log(`Work: ${work.data.title}, Platform: ${work.data.platform}`);
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 // IDから拡張子を削除するヘルパー
@@ -90,6 +91,14 @@ const parseMarkdownLinks = (text: string) => {
                 }
 
                 {work.data.isUpdated && <span class="badge-updated">UP</span>}
+
+                {
+                    work.data.platform === "pixiv" ? (
+                        <span class="badge-platform pixiv">pixiv</span>
+                    ) : work.data.platform === "kakuyomu" ? (
+                        <span class="badge-platform kakuyomu">カクヨム</span>
+                    ) : null
+                }
             </div>
 
             <div class="work-meta">
@@ -105,7 +114,7 @@ const parseMarkdownLinks = (text: string) => {
                 {
                     !pickupLabel && work.data.lastUpdated && (
                         <time class="work-date">
-                            {formatDate(work.data.lastUpdated)}
+                            最終更新：{formatDate(work.data.lastUpdated)}
                         </time>
                     )
                 }
@@ -245,6 +254,23 @@ const parseMarkdownLinks = (text: string) => {
         background-color: #d32f2f;
         padding: 1px 6px;
         border-radius: 2px;
+    }
+
+    /* プラットフォームバッジ */
+    .badge-platform {
+        font-size: 0.7rem;
+        font-weight: bold;
+        color: #fff;
+        padding: 1px 6px;
+        border-radius: 2px;
+    }
+
+    .badge-platform.pixiv {
+        background-color: #0096fa;
+    }
+
+    .badge-platform.kakuyomu {
+        background-color: #1d9d74;
     }
 
     .work-meta {
