@@ -4,20 +4,20 @@ const characters = [
     role: "University Student",
     name: "秋吉 悠也",
     nameEn: "Akiyoshi Yuya",
-    quote: "「藤堂先生に指導してもらいたいです」",
+    quote: "<span class='text-block'>「藤堂先生に</span><span class='text-block'>指導してもらいたいです」</span>",
     description: [
-      "才能も容姿も恵まれながら、<br />満たされない渇きを抱える青年。",
-      "はじめて『本気で向き合ってくれた』圭に<br />執着にも似た一途な想いを向け、迷いなく踏み込んでいく。"
+      "<span class='text-block'>才能も容姿も恵まれながら、</span><wbr><span class='text-block'>満たされない渇きを抱える青年。</span>",
+      "<span class='text-block'>はじめて『本気で向き合ってくれた』圭に</span><wbr><span class='text-block'>執着にも似た一途な想いを向け、</span><wbr><span class='text-block'>迷いなく踏み込んでいく。</span>"
     ]
   },
   {
     role: "Lecturer",
     name: "藤堂 圭",
     nameEn: "Todo Kei",
-    quote: "「感情に価値はない。判断を鈍らせるだけだ」",
+    quote: "<span class='text-block'>「感情に価値はない。</span><span class='text-block'>判断を鈍らせるだけだ」</span>",
     description: [
-      "理性を信奉し、<br />誰にも心を開かない孤高の大学講師。",
-      "だがその冷たさの奥には、<br />裏切りによって刻まれた深い傷を隠している。"
+      "<span class='text-block'>理性を信奉し、</span><wbr><span class='text-block'>誰にも心を開かない孤高の大学講師。</span>",
+      "<span class='text-block'>だがその冷たさの奥には、</span><wbr><span class='text-block'>裏切りによって刻まれた深い傷を隠している。</span>"
     ]
   }
 ];
@@ -35,7 +35,7 @@ const characters = [
             <h3 class="char-name">{char.name} <span>{char.nameEn}</span></h3>
           </header>
           
-          <blockquote class="char-quote">{char.quote}</blockquote>
+          <blockquote class="char-quote" set:html={char.quote}></blockquote>
           
           <div class="char-desc">
             {char.description.map((text) => (
@@ -89,6 +89,9 @@ const characters = [
     line-height: 1.8;
     color: var(--lp-text-dim);
     text-align: left;
+  }
+  :global(.text-block) {
+    display: inline-block;
   }
   @media (max-width: 768px) {
     .char-grid {
