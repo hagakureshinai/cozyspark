@@ -9,7 +9,7 @@
     </h1>
     <div class="hero-copy-group">
       <p class="hero-catch">
-        感情はノイズだと、ずっとそう思っていた。<br />
+        感情はノイズだと、<span class="br-mobile"></span>ずっとそう思っていた。<br />
         その眼差しに囚われるまでは。
       </p>
     </div>
@@ -212,12 +212,19 @@
     }
   }
 
+  .br-mobile {
+    display: none;
+  }
+
   @media (max-width: 768px) {
     .hero-title {
       font-size: 3rem;
     }
     .hero-catch {
       font-size: 1.2rem;
+    }
+    .br-mobile {
+      display: block;
     }
   }
 </style>
