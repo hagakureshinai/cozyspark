@@ -28,16 +28,17 @@ const characters = [
     <h2 class="section-title-en">CHARACTERS</h2>
     
     <div class="char-grid">
-      {characters.map((char) => (
+      {characters.map((char, index) => (
         <article class="glass-card char-card">
-          <header>
+          <div class={`card-bg-diagram variant-${index % 2}`}></div>
+          <header class="char-content-layer">
             <span class="char-role">{char.role}</span>
             <h3 class="char-name">{char.name} <span>{char.nameEn}</span></h3>
           </header>
           
-          <blockquote class="char-quote" set:html={char.quote}></blockquote>
+          <blockquote class="char-quote char-content-layer" set:html={char.quote}></blockquote>
           
-          <div class="char-desc">
+          <div class="char-desc char-content-layer">
             {char.description.map((text) => (
               <p set:html={text} />
             ))}
@@ -50,7 +51,86 @@ const characters = [
 
 <style>
   .characters {
-    padding: 3rem 0;
+    padding: 4rem 0;
+  }
+
+  /* --- カード背景の図形デザイン --- */
+  .char-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-bg-diagram {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85; /* さらに濃くはっきりと */
+    /* 共通の細かいグリッド */
+    background-image:
+      linear-gradient(rgba(196, 137, 149, 0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(196, 137, 149, 0.25) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black, transparent 95%);
+  }
+
+  /* --- バリエーション 0 (1枚目, 3枚目...) : 悠也 --- */
+  .variant-0::before {
+    /* 右上に大きな円 */
+    content: "";
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    border: 1px solid rgba(196, 137, 149, 0.4);
+    border-radius: 50%;
+    top: -10%;
+    right: -10%;
+  }
+
+  .variant-0::after {
+    /* 左下に小さな斜めの四角 */
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border: 1.5px solid rgba(196, 137, 149, 0.5);
+    bottom: -5%;
+    left: -5%;
+    transform: rotate(15deg);
+  }
+
+  /* --- バリエーション 1 (2枚目, 4枚目...) : 圭 --- */
+  .variant-1::before {
+    /* 左上に斜めの四角 */
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgba(196, 137, 149, 0.4);
+    top: -10%;
+    left: -10%;
+    transform: rotate(30deg);
+  }
+
+  .variant-1::after {
+    /* 右下に小さな円 */
+    content: "";
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border: 1.5px solid rgba(196, 137, 149, 0.5);
+    border-radius: 50%;
+    bottom: -5%;
+    right: -5%;
+  }
+
+  /* 図形の上に文字を表示するためのレイヤー設定 */
+  .char-content-layer {
+    position: relative;
+    z-index: 1;
   }
   .char-grid {
     display: grid;
