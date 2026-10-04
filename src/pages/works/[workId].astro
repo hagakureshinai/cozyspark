@@ -7,7 +7,10 @@ import ShortStoryDetail from "../../components/works/ShortStoryDetail.astro";
 import SeriesDetail from "../../components/works/SeriesDetail.astro";
 
 export async function getStaticPaths() {
-  const allWorks = await getCollection("works");
+  const allWorks = await getCollection(
+    "works",
+    ({ data }) => data.isDraft !== true,
+  );
   const allEpisodes = await getCollection("episodes");
 
   // IDから拡張子を除くヘルパー関数

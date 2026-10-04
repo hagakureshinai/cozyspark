@@ -6,7 +6,10 @@ import NovelViewer from "../../../components/NovelViewer.astro";
 
 export async function getStaticPaths() {
   const allEpisodes = await getCollection("episodes");
-  const allWorks = await getCollection("works");
+  const allWorks = await getCollection(
+    "works",
+    ({ data }) => data.isDraft !== true,
+  );
 
   // IDから拡張子を除いたファイル名を取得する安全な関数
   const getSlug = (id: string) => {
@@ -18,7 +21,12 @@ export async function getStaticPaths() {
     );
   };
 
-  return allEpisodes.map((episode) => {
+  const publicWorkIds = new Set(allWorks.map((work) => getSlug(work.id)));
+  const publicEpisodes = allEpisodes.filter((episode) =>
+    publicWorkIds.has(episode.data.workId),
+  );
+
+  return publicEpisodes.map((episode) => {
     const workId = episode.data.workId;
     const episodeId = getSlug(episode.id);
 
